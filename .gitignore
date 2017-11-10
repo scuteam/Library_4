@@ -1,0 +1,6 @@
+# Python
+*.py[c]
+dist
+build
+node_modules
+

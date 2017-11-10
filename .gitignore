@@ -3,9 +3,20 @@
 dist
 build
 node_modules
+<<<<<<< HEAD
 env
 .vscode
 frontend/.babelrc
 frontend/.editorconfig
 frontend/package-lock.json
 frontend/.postcssrc.js
+=======
+frontend/.babelrc
+frontend/.editorconfig
+frontend/.eslintignore
+frontend/.eslintrc.js
+frontend/.gitignore
+frontend/.postcssrc.js
+frontend/test/unit/.eslintrc
+
+>>>>>>> d8f317a0741b582ab94a8f659957105fc04640a8

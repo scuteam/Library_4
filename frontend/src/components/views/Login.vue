@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavTitleBar></NavTitleBar>
+    <NavTitleBar :navTitleText="navTitleText" :navButtonText="navButtonText"></NavTitleBar>
     <el-row class="content">
       <el-col :xs="24" :sm="{span: 6, offset: 9}">
         <el-card class="box-card">
@@ -37,7 +37,7 @@
               </el-row>
               <el-row>
                 <el-col :offset="10">
-                  <el-button type="primary" round @click="handleLogin">登录</el-button>
+                  <el-button type="primary" round @click="dealLogin">登录</el-button>
                 </el-col>
               </el-row>
             </el-form>
@@ -56,13 +56,15 @@
     },
     data () {
       return {
+        navTitleText: '网上图书管理系统',
+        navButtonText: '登录',
         account: '',
         password: '',
         role: ''
       }
     },
     methods: {
-      handleLogin () {
+      dealLogin () {
         console.log('views.Login.handleLogin ===start===')
         console.log('account:', this.account)
         console.log('password:', this.password)

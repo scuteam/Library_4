@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Borrow from '@/components/views/Borrow'
 import Login from '@/components/views/Login'
 import Renew from '@/components/views/Renew'
+import BookManage from '@/components/views/BookManage'
 Vue.use(Router)
 
 export default new Router({
@@ -21,6 +22,11 @@ export default new Router({
       path: '/renew',
       name: 'Renew',
       component: Renew
+    },
+    {
+      path: '/book_manage',
+      name: 'BookManage',
+      component: BookManage
     }
   ]
 })

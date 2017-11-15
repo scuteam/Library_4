@@ -153,6 +153,7 @@
           // message to user
           // remove it from table data
         }
+        this.$message.success('成功为' + this.selectedBookList.length + '本书续期!')
         console.log('renewing books === start ===')
       },
       sortDate (a, b) {
@@ -163,3 +164,11 @@
     }
   }
 </script>
+
+<style scoped lang="stylus">
+  #multiRenew {
+    margin-top 50px
+    float right
+    margin-right 100px
+  }
+</style>

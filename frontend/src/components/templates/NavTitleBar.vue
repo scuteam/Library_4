@@ -27,6 +27,7 @@
           this.$router.push('/login')
         } else if (this.buttonText === '注销') {
           // 注销,且跳转到主界面?还是登录界面
+          this.$router.push('/')
         }
       }
     }

@@ -11,7 +11,7 @@
             <el-row :gutter="20">
               <el-col :span="12" :offset="6">
                 <div style="margin-top: 15px;">
-                  <el-input placeholder="请输入搜索内容" v-model="input5" class="input-with-select">
+                  <el-input placeholder="请输入搜索内容" v-model="searchContent" class="input-with-select">
                     <el-select v-model="borrowType" slot="prepend" placeholder="书名">
                       <el-option label="书名" value="bookName"></el-option>
                       <el-option label="书籍出版社" value="bookPublisher"></el-option>
@@ -42,6 +42,7 @@
     },
     data () {
       return {
+        searchContent: '',
         navTitleText: '网上图书管理系统',
         navButtonText: '登录',
         borrowType: 'bookName'

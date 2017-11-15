@@ -70,6 +70,11 @@
         console.log('password:', this.password)
         console.log('role:', this.role)
         console.log('views.Login.handleLogin ===end===')
+        if (this.role === 'user') {
+          this.$router.push('/renew')
+        } else if (this.role === 'bookManager') {
+          this.$router.push('/book_manage')
+        }
       }
     }
   }

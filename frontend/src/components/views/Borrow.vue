@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NavTitleBar></NavTitleBar>
+    <NavTitleBar :navTitleText="navTitleText" :navButtonText="navButtonText"></NavTitleBar>
     <div>
       <el-carousel indicator-position="outside" height="580px">
         <el-carousel-item  :key="1">
@@ -42,6 +42,8 @@
     },
     data () {
       return {
+        navTitleText: '网上图书管理系统',
+        navButtonText: '登录',
         borrowType: 'bookName'
       }
     }

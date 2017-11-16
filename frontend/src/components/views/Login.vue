@@ -69,6 +69,23 @@
         console.log('account:', this.account)
         console.log('password:', this.password)
         console.log('role:', this.role)
+//        let loginInfo = {
+//
+//
+//
+//        }
+        this.$http.post('/api/login/', {
+          'params': {
+            account: this.account,
+            password: this.password,
+            role: this.role
+          }
+        })
+          .then((res) => {
+            console.log('success')
+          }, (err) => {
+            console.log(err)
+          })
         console.log('views.Login.handleLogin ===end===')
         if (this.role === 'user') {
           this.$router.push('/renew')

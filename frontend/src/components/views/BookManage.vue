@@ -1,32 +1,32 @@
 <template>
   <div id="renew">
     <NavTitleBar :navTitleText="navTitleText" :navButtonText="navButtonText"></NavTitleBar>
-    <el-container style="height: 610px; border: 1px solid #eee">
-      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+    <el-container id="container">
+      <el-aside width="200px" id="aside">
         <el-menu
-          default-active="1"
+          default-active="bookRemove"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
           @select="handleMenuSelection">
-          <el-menu-item index="1">
-            <span slot="title">图书上架</span>
-          </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="bookRemove">
             <span slot="title">图书下架</span>
+          </el-menu-item>
+          <el-menu-item index="bookAdd">
+            <span slot="title">图书上架</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main>
-        <el-row style="margin-top: 10px">
+        <el-row id="book-add" v-show="bookAddVisible">
           <el-col :span="8" >
             <div id="bookInfoInput">
-              <el-form labelWidth="100px">
+                <el-form labelWidth="100px">
                   <el-row>
                     <el-col>
                       <el-form-item label="ISBN:"  required="">
                         <el-input v-model="bookISBN" type="text" autofocus></el-input>
-                        </el-form-item>
+                      </el-form-item>
                     </el-col>
                   </el-row>
                   <el-row>
@@ -64,16 +64,16 @@
                       </el-form-item>
                     </el-col>
                   </el-row>
-                  <el-row :gutter="20">
-                    <el-col :span="2" :offset="6">
-                      <el-button type="success" @click="handleAddBook">保存</el-button>
-                    </el-col>
-                    <el-col :span="2" :offset="10">
-                      <el-button type="danger" @click="handleCancelAddBook">取消</el-button>
-                    </el-col>
-                  </el-row>
                 </el-form>
-            </div>
+              </div>
+              <el-row :gutter="20">
+                <el-col :span="2" :offset="6">
+                  <el-button type="success" @click="handleAddBook">保存</el-button>
+                </el-col>
+                <el-col :span="2" :offset="10">
+                  <el-button type="danger" @click="handleCancelAddBook">取消</el-button>
+                </el-col>
+              </el-row>
           </el-col>
           <el-col :span="11" :offset="1">
             <el-row>
@@ -97,6 +97,42 @@
             </el-transfer>
           </el-col>
         </el-row>
+        <el-row style="margin-top: 10px" v-show="bookRemoveVisible">
+          <el-col :span="12" :offset="6">
+            <div id="search-bar">
+              <search-bar></search-bar>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row v-show="bookRemoveVisible" id="book-remove">
+          <el-col :span="20" :offset="2">
+            <el-table ref="multiSelectionTable" :data="tableData"
+                  @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="55">
+              </el-table-column>
+              <el-table-column prop="ISBN" label="ISBN">
+                <template slot-scope="scope">
+                  <p>{{scope.row.ISBN}}</p>
+                </template>
+              </el-table-column>
+              <el-table-column prop="bookName" label="书名">
+                <template slot-scope="scope">
+                  <p>{{scope.row.bookName}}</p>
+                </template>
+              </el-table-column>
+              <el-table-column prop="borrowAuthor" label="作者">
+                <template slot-scope="scope">
+                  <p>{{scope.row.bookAuthor}}</p>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <el-button type="primary" v-show="multiRemoveButtonVisible&&(activeIndex==='bookRemove')" id="multiRemoveButton">批量下架</el-button>
+          </el-col>
+        </el-row>
       </el-main>
     </el-container>
   </div>
@@ -104,16 +140,18 @@
 
 <script>
   import NavTitleBar from '../templates/NavTitleBar.vue'
+  import SearchBar from '../templates/SearchBar.vue'
   export default {
     name: 'bookManage',
     components: {
-      NavTitleBar
+      NavTitleBar,
+      SearchBar
     },
     data () {
       return {
         navTitleText: '书籍操作员',
         navButtonText: '注销',
-        activeIndex: '1',
+        activeIndex: 'bookRemove',
         bookISBN: '',
         bookName: '',
         bookAuthor: '',
@@ -125,7 +163,26 @@
           {key: 4, label: 'tag4'}, {key: 5, label: 'tag5'}, {key: 6, label: 'tag6'},
           {key: 7, label: 'tag7'}, {key: 8, label: 'tag8'}, {key: 9, label: 'tag9'}],
         hasTagsIndexList: [],
-        hasTagsLabelList: []
+        hasTagsLabelList: [],
+        bookAddVisible: false,
+        bookRemoveVisible: true,
+        tableData: [{
+          'ISBN': 111,
+          'bookName': 'borrow1',
+          'bookAuthor': '22'
+        },
+        {
+          'ISBN': 222,
+          'bookName': 'borrow2',
+          'bookAuthor': '44'
+        },
+        {
+          'ISBN': 333,
+          'bookName': 'borrow3',
+          'bookAuthor': '55'
+        }],
+        multiRemoveButtonVisible: false,
+        selectedBookList: []
       }
     },
     mounted: function () {
@@ -134,10 +191,14 @@
     },
     methods: {
       handleMenuSelection (index) {
-        if (index === '1') {
-          this.activeIndex = '1'
-        } else if (index === '2') {
-          this.activeIndex = '2'
+        if (index === 'bookAdd') {
+          this.activeIndex = 'bookAdd'
+          this.bookAddVisible = true
+          this.bookRemoveVisible = false
+        } else if (index === 'bookRemove') {
+          this.activeIndex = 'bookRemove'
+          this.bookAddVisible = false
+          this.bookRemoveVisible = true
         }
       },
       handleMoveTags (value, direction, movedKeys) {
@@ -203,6 +264,20 @@
           this.$message.error('上传图片大小不能超过 2MB!')
         }
         return isJPG && isLt2M
+      },
+      handleSelectionChange (val) {
+        this.selectedBookList = val
+        if (val.length === 0) {
+          console.log('select nothing')
+          this.multiRemoveButtonVisible = false
+          return
+        }
+        this.multiRemoveButtonVisible = true
+        console.log('selection change === start ===')
+        for (let i = 0; i < val.length; i++) {
+          console.log(val[i])
+        }
+        console.log('selection change === end ===')
       }
     }
   }
@@ -210,29 +285,50 @@
 
 <style scoped lang="stylus">
   .avatar-uploader .el-upload {
-    border: 5px dashed #51#2b81af;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
+    border: 5px dashed #51#2b81af
+    border-radius: 6px
+    cursor: pointer
+    position: relative
+    overflow: hidden
   }
   .avatar-uploader .el-upload:hover {
-    border: 7px;
-    border-color: #ff5b84;
+    border: 7px
+    border-color: #ff5b84
   }
   .avatar-uploader-icon {
-    font-size: 28px;
-    color: #bfccff;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
+    font-size: 28px
+    color: #bfccff
+    width: 178px
+    height: 178px
+    line-height: 178px
+    text-align: center
   }
   .avatar {
-    width: 120px;
-    height: 150px;
-    border 3px;
+    width: 120px
+    height: 150px
+    border 3px
     border-color #528CE0
-    display: block;
+    display: block
+  }
+  #container {
+    height: 610px
+    border: 1px solid #eee
+  }
+  #aside {
+    background-color: rgb(238, 241, 246)
+  }
+  #book-add {
+    margin-top: 10px
+  }
+  #book-remove {
+    margin-top: 20px
+  }
+  #search-bar {
+    margin-top: 15px
+  }
+  #multiRemoveButton {
+    margin-top 50px
+    float right
+    margin-right 100px
   }
 </style>

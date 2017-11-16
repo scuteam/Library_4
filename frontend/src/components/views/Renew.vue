@@ -1,27 +1,29 @@
 <template>
   <div id="renew">
     <NavTitleBar :navTitleText="navTitleText" :navButtonText="navButtonText"></NavTitleBar>
-    <el-container style="height: 610px; border: 1px solid #eee">
-      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+    <el-container id="container">
+      <el-aside width="200px" id="aside">
         <el-menu
-          default-active="1"
+          default-active="borrowStatus"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
           @select="handleMenuSelection">
-          <el-menu-item index="1">
+          <el-menu-item index="borrowStatus">
             <span slot="title">借阅状态</span>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="historyBorrowRecord">
             <span slot="title">历史借阅</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main>
-        <el-table ref="multiSelectionTable" :data="tableData"
+        <el-table ref="multiSelectionTable"
+                  id="bookTable"
+                  :data="tableData"
                   :default-sort="{prop: 'returnDate', order: 'ascending'}"
                   @selection-change="handleSelectionChange">
-          <el-table-column type="selection" v-if="activeIndex=='1'" width="55">
+          <el-table-column type="selection" v-if="activeIndex=='borrowStatus'" width="55">
           </el-table-column>
           <el-table-column prop="ISBN" label="ISBN">
             <template slot-scope="scope">
@@ -67,7 +69,7 @@
       return {
         navTitleText: '用户',
         navButtonText: '注销',
-        activeIndex: '1',
+        activeIndex: 'borrowStatus',
         borrowTableData: [],
         historyTableData: [],
         tableData: [],
@@ -120,14 +122,12 @@
     },
     methods: {
       handleMenuSelection (index) {
-        if (index === '1') {
-          this.activeIndex = '1'
+        if (index === 'borrowStatus') {
+          this.activeIndex = 'borrowStatus'
           this.tableData = this.borrowTableData
-          this.buttonVisible = true
-        } else if (index === '2') {
-          this.activeIndex = '2'
+        } else if (index === 'historyBorrowRecord') {
+          this.activeIndex = 'historyBorrowRecord'
           this.tableData = this.historyTableData
-          this.buttonVisible = false
         }
       },
       handleSelectionChange (val) {
@@ -166,6 +166,17 @@
 </script>
 
 <style scoped lang="stylus">
+  #containter {
+    height: 610px
+    border: 1px solid #eee
+  };
+  #aside {
+    background-color: rgb(238, 241, 246)
+  };
+  #bookTable {
+    margin-top 20px
+    margin-left 20px
+  };
   #multiRenew {
     margin-top 50px
     float right

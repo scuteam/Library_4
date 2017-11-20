@@ -6,7 +6,7 @@
       <el-option label="作者" value="bookAuthor"></el-option>
       <el-option label="ISBN" value="bookISBN"></el-option>
     </el-select>
-    <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
+    <el-button slot="append" icon="el-icon-search" @click="deal_query_book"></el-button>
   </el-input>
 </template>
 <script>
@@ -18,11 +18,29 @@
       }
     },
     methods: {
-      handleSearch () {
+      deal_query_book () {
         console.log('searching === start ===')
         console.log('searchType is ' + this.searchType)
         console.log('searchContent is ' + this.searchContent)
         console.log('searching === end ===')
+        let win = this
+        // query book
+        this.$http.get('/api/query_book', {
+          'params': {
+            query_type: this.searchType,
+            query_keyword: this.searchContent
+          }
+        }).then((res) => {
+          let bookList = res.data.book_list
+          console.log('query book from server, get result: === start ===')
+          console.log(bookList)
+          win.$emit('getQueryResult', bookList)
+          console.log('query book from server, get result: === end ===')
+        }, (err) => {
+          console.log('query book from server, get error: === start ===')
+          console.log(err)
+          console.log('query book from server, get error: === end ===')
+        })
       }
     }
   }

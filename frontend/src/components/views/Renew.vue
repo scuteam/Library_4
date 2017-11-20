@@ -109,13 +109,20 @@
         console.log('renewing books === start ===')
         for (let i = 0; i < this.selectedBookList.length; i++) {
           console.log(this.selectedBookList[i])
-          // request backend to deal
-          // waiting for result
-          // message to user
-          // remove it from table data
         }
-        this.$message.success('成功为' + this.selectedBookList.length + '本书续期!')
-        console.log('renewing books === start ===')
+        this.$confirm('确认为所选图书续期吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deal_renew()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消续期'
+          })
+        })
+        console.log('renewing books === end ===')
       },
       sortDate (a, b) {
         let dateA = new Date(a)
@@ -138,6 +145,27 @@
           console.log(err)
           console.log('错误信息输出完毕')
         })
+      },
+      deal_renew () {
+        if (this.selectedBookList.length !== 0) {
+          this.$http.get('/api/renew', {
+            params: {
+              'renew_book_list': JSON.stringify(this.selectedBookList)
+            }
+          }).then((res) => {
+            if (res.data.renewStatus === 200) {
+              this.$message.success('成功为' + this.selectedBookList.length + '本书续期!')
+            }
+          }, (err) => {
+            console.log('renewing books, got error, error msg: === start ===')
+            console.log(err)
+            console.log('renewing books, got error, error msg: === end ===')
+          })
+        }
+        // request backend to deal
+        // waiting for result
+        // message to user
+        // remove it from table data
       }
     }
   }

@@ -100,7 +100,7 @@
         <el-row style="margin-top: 10px" v-show="bookRemoveVisible">
           <el-col :span="12" :offset="6">
             <div id="search-bar">
-              <search-bar></search-bar>
+              <search-bar @getQueryResult="handleQueryResultShow"></search-bar>
             </div>
           </el-col>
         </el-row>
@@ -133,7 +133,7 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-button type="primary" v-show="multiRemoveButtonVisible&&(activeIndex==='bookRemove')" id="multiRemoveButton">批量下架</el-button>
+            <el-button type="primary" v-show="multiRemoveButtonVisible&&(activeIndex==='bookRemove')" id="multiRemoveButton" @click="handleDeleteBook">批量下架</el-button>
           </el-col>
         </el-row>
       </el-main>
@@ -162,9 +162,10 @@
         bookNumber: '',
         bookIntroduction: '',
         bookImageUrl: '',
-        totalTags: [{key: 1, label: 'tag1'}, {key: 2, label: 'tag2'}, {key: 3, label: 'tag3'},
-          {key: 4, label: 'tag4'}, {key: 5, label: 'tag5'}, {key: 6, label: 'tag6'},
-          {key: 7, label: 'tag7'}, {key: 8, label: 'tag8'}, {key: 9, label: 'tag9'}],
+        totalTags: [],
+//        totalTags: [{key: 1, label: 'tag1'}, {key: 2, label: 'tag2'}, {key: 3, label: 'tag3'},
+//          {key: 4, label: 'tag4'}, {key: 5, label: 'tag5'}, {key: 6, label: 'tag6'},
+//          {key: 7, label: 'tag7'}, {key: 8, label: 'tag8'}, {key: 9, label: 'tag9'}],
         hasTagsIndexList: [],
         hasTagsLabelList: [],
         bookAddVisible: false,
@@ -193,6 +194,23 @@
       console.log('account is' + this.$route.params.account)
       // TODO:
       // get total tags from server
+      this.$http.get('/api/query_all_tags')
+        .then((res) => {
+          this.totalTags.length = 0 // clear the data
+          let index = 1
+          for (let i = 0; i < res.data.tags.length; i++) {
+            let tmpTag = {
+              key: index,
+              label: res.data.tags[i]
+            }
+            this.totalTags.push(tmpTag)
+            index++
+          }
+        }, (err) => {
+          console.log('query all tags from server, query error: === start ===')
+          console.log(err)
+          console.log('query all tags from server, query error: === start ===')
+        })
     },
     methods: {
       handleMenuSelection (index) {
@@ -240,14 +258,27 @@
         }).then(() => {
           // TODO:
           // tell the server to add book
-          this.$message({
-            type: 'success',
-            message: '上架成功!'
-          })
+          this.deal_create_book()
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消上架'
+          })
+        })
+      },
+      handleDeleteBook () {
+        this.$confirm('确认将所选图书下架吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // TODO:
+          // tell the server to add book
+          this.deal_delete_book()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消下架'
           })
         })
       },
@@ -261,7 +292,6 @@
       beforeAvatarUpload (file) {
         const isJPG = file.type === 'image/jpeg'
         const isLt2M = file.size / 1024 / 1024 < 2
-
         if (!isJPG) {
           this.$message.error('上传图片只能是 JPG 格式!')
         }
@@ -283,6 +313,69 @@
           console.log(val[i])
         }
         console.log('selection change === end ===')
+      },
+      handleQueryResultShow (bookList) {
+        this.tableData.length = 0 // clear the tableData
+        for (let i = 0; i < bookList.length; i++) {
+          let tmpBook = {
+            ISBN: bookList[i].ISBN,
+            bookName: bookList[i].title,
+            bookAuthor: bookList[i].author
+          }
+          this.tableData.push(tmpBook)
+        }
+      },
+      deal_create_book () {
+        let newBook = {
+          'ISBN': this.bookISBN,
+          'author': this.bookAuthor,
+          'publisher': this.bookPublisher,
+          'total_number': this.bookNumber,
+          'left_number': this.bookNumber,
+          'intro': this.bookIntroduction,
+          'title': this.bookName,
+          'surface': this.bookImageUrl,
+          'tag': this.hasTagsLabelList
+        }
+        this.$http.get('/api/create_book/', {
+          params: {'newBook': newBook}
+        }).then((res) => {
+          console.log('creating a book, === start ===')
+          if (res.data.createStatus === 200) {
+            this.$message({
+              type: 'success',
+              message: '上架成功!'
+            })
+            // should clear the data?
+          }
+          console.log('creating a book, === end ===')
+        }, (err) => {
+          console.log('creating a book, got error, error msg === start ===')
+          console.log(err)
+          console.log('creating a book, got error, error msg === end ===')
+        })
+      },
+      deal_delete_book () {
+        if (this.selectedBookList.length !== 0) {
+          this.$http.get('/api/delete_book', {
+            params: {
+              'delete_book_list': JSON.stringify(this.selectedBookList)
+            }
+          }).then((res) => {
+            console.log('deleting a book, === start ===')
+            if (res.data.deleteStatus === 200) {
+              this.$message.success('下架成功')
+              // TODO: delete selected book from local tableData list
+              // TODO: what to show next?
+            }
+            console.log()
+            console.log('deleting a book, === end ===')
+          }, (err) => {
+            console.log('deleting a book, got error, error msg: === start ===')
+            console.log(err)
+            console.log('deleting a book, got error, error msg: === end ===')
+          })
+        }
       }
     }
   }

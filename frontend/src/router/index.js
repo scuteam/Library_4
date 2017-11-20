@@ -19,12 +19,12 @@ export default new Router({
       component: Login
     },
     {
-      path: '/renew',
+      path: '/renew/:account',
       name: 'Renew',
       component: Renew
     },
     {
-      path: '/book_manage',
+      path: '/book_manage/:account',
       name: 'BookManage',
       component: BookManage
     }

@@ -106,8 +106,11 @@
         </el-row>
         <el-row v-show="bookRemoveVisible" id="book-remove">
           <el-col :span="20" :offset="2">
-            <el-table ref="multiSelectionTable" :data="tableData"
-                  @selection-change="handleSelectionChange">
+            <el-table
+              v-show="tableData.length !== 0"
+              ref="multiSelectionTable"
+              :data="tableData"
+              @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="55">
               </el-table-column>
               <el-table-column prop="ISBN" label="ISBN">
@@ -166,26 +169,28 @@
         hasTagsLabelList: [],
         bookAddVisible: false,
         bookRemoveVisible: true,
-        tableData: [{
-          'ISBN': 111,
-          'bookName': 'borrow1',
-          'bookAuthor': '22'
-        },
-        {
-          'ISBN': 222,
-          'bookName': 'borrow2',
-          'bookAuthor': '44'
-        },
-        {
-          'ISBN': 333,
-          'bookName': 'borrow3',
-          'bookAuthor': '55'
-        }],
+        tableData: [],
+//        tableData: [{
+//          'ISBN': 111,
+//          'bookName': 'borrow1',
+//          'bookAuthor': '22'
+//        },
+//        {
+//          'ISBN': 222,
+//          'bookName': 'borrow2',
+//          'bookAuthor': '44'
+//        },
+//        {
+//          'ISBN': 333,
+//          'bookName': 'borrow3',
+//          'bookAuthor': '55'
+//        }],
         multiRemoveButtonVisible: false,
         selectedBookList: []
       }
     },
     mounted: function () {
+      console.log('account is' + this.$route.params.account)
       // TODO:
       // get total tags from server
     },

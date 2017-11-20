@@ -78,47 +78,8 @@
       }
     },
     mounted: function () {
-      // example data which got by http
-      let tmpBorrowTableData = [{
-        'ISBN': 111,
-        'bookName': 'borrow1',
-        'borrowDate': '22',
-        'returnDate': '2017-10-11'
-      },
-      {
-        'ISBN': 222,
-        'bookName': 'borrow2',
-        'borrowDate': '44',
-        'returnDate': '2017-10-25'
-      },
-      {
-        'ISBN': 333,
-        'bookName': 'borrow3',
-        'borrowDate': '55',
-        'returnDate': '2017-10-09'
-      }]
-      let tmpHistoryTableData = [{
-        'ISBN': 111,
-        'bookName': 'history1',
-        'borrowDate': '22',
-        'returnDate': '2017-11-06'
-      },
-      {
-        'ISBN': 222,
-        'bookName': 'history2',
-        'borrowDate': '44',
-        'returnDate': '2017-11-04'
-      },
-      {
-        'ISBN': 333,
-        'bookName': 'history3',
-        'borrowDate': '55',
-        'returnDate': '2017-11-05'
-      }]
-      this.borrowTableData = tmpBorrowTableData
-      this.historyTableData = tmpHistoryTableData
-      // initial
-      this.tableData = this.borrowTableData
+      console.log('router params is ' + this.$route.params.account)
+      this.deal_borrow_status_query()
     },
     methods: {
       handleMenuSelection (index) {
@@ -160,6 +121,23 @@
         let dateA = new Date(a)
         let dateB = new Date(b)
         return dateA > dateB
+      },
+      deal_borrow_status_query () {
+        // query borrow status
+        this.$http.get('/api/get_borrow_status/', {
+          params: {account: this.$route.params.account}
+        }).then((res) => {
+          let tmpBorrowTableData = res.data.borrowTableData
+          let tmpHistoryTableData = res.data.historyTableData
+          this.borrowTableData = tmpBorrowTableData
+          this.historyTableData = tmpHistoryTableData
+          // initial
+          this.tableData = this.borrowTableData
+        }, (err) => {
+          console.log('处理借阅状态查询过程出现错误,错误信息如下:')
+          console.log(err)
+          console.log('错误信息输出完毕')
+        })
       }
     }
   }

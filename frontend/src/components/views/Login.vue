@@ -37,7 +37,7 @@
               </el-row>
               <el-row>
                 <el-col :offset="10">
-                  <el-button type="primary" round @click="dealLogin">登录</el-button>
+                  <el-button type="primary" round @click="deal_login">登录</el-button>
                 </el-col>
               </el-row>
             </el-form>
@@ -64,17 +64,12 @@
       }
     },
     methods: {
-      dealLogin () {
+      deal_login () {
         console.log('views.Login.handleLogin ===start===')
         console.log('account:', this.account)
         console.log('password:', this.password)
         console.log('role:', this.role)
-//        let loginInfo = {
-//
-//
-//
-//        }
-        this.$http.post('/api/login/', {
+        this.$http.get('/api/verify_account/', {
           'params': {
             account: this.account,
             password: this.password,
@@ -83,15 +78,22 @@
         })
           .then((res) => {
             console.log('success')
+            if (res.data.loginStatus === 200) {
+              if (this.role === 'user') {
+                this.$router.push({path: '/renew/:account', name: 'Renew', params: {account: this.account}})
+              } else if (this.role === 'bookManager') {
+                this.$router.push({path: '/book_manage/:account', name: 'BookManage', params: {account: this.account}})
+              }
+              this.$message.success('登录成功')
+            } else {
+              this.$message.error('帐号密码不匹配')
+            }
           }, (err) => {
+            console.log('处理登录过程出现错误,错误信息如下:')
             console.log(err)
+            console.log('错误信息输出完毕')
           })
         console.log('views.Login.handleLogin ===end===')
-        if (this.role === 'user') {
-          this.$router.push('/renew')
-        } else if (this.role === 'bookManager') {
-          this.$router.push('/book_manage')
-        }
       }
     }
   }

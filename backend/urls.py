@@ -5,8 +5,8 @@ from views import verify_account
 from views import get_borrow_status
 from views import query_book
 from views import query_all_tags
-from views import create_book
-from views import delete_book
+from controllers import create_book
+from controllers import delete_book
 from views import renew
 urlpatterns = [
     url(r'^verify_account/', verify_account),

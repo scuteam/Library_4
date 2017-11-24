@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
-
+from controllers import Query_book
 # Create your views here.
 def verify_account(request):
     account = request.GET.get('account')
@@ -82,60 +82,53 @@ def get_borrow_status(request):
 def query_book(request):
     query_type = request.GET.get('query_type')
     query_keyword = request.GET.get('query_keyword')
-    print query_type, query_keyword
+    if query_keyword == '':  # user didn't input any keyword, use space to replace
+        query_keyword = ' '
+    # print query_type
+    # print query_keyword == ''
+    # print type(query_keyword)
     # search from database
+    query_result = Query_book.query_book(query_type,query_keyword)
+    print query_result
+    book_list = []
+    for book in query_result:
+        tmp_book = {
+            'ISBN': book.ISBN,
+            'author': book.author,
+            'publisher': book.publisher,
+            'total_number': book.total_number,
+            'left_number': book.left_number,
+            'intro': book.intro,
+            'title': book.title,
+            'surface': book.surface
+        }
+        book_list.append(tmp_book)
     # mock data
-    book_list = [{
-        'ISBN': 'isbn',
-        'author': 'author',
-        'publisher': 'publisher',
-        'total_number': 20,
-        'left_number': 13,
-        'intro': 'this is a string of introduction',
-        'title': 'book title',
-        'surface': 'http://XXX/xxx.jpg'
-    },{
-        'ISBN': 'isbn',
-        'author': 'author',
-        'publisher': 'publisher',
-        'total_number': 20,
-        'left_number': 13,
-        'intro': 'this is a string of introduction',
-        'title': 'book title',
-        'surface': 'http://XXX/xxx.jpg'
-    }]
+    # book_list = [{
+    #     'ISBN': 'isbn',
+    #     'author': 'author',
+    #     'publisher': 'publisher',
+    #     'total_number': 20,
+    #     'left_number': 13,
+    #     'intro': 'this is a string of introduction',
+    #     'title': 'book title',
+    #     'surface': 'http://XXX/xxx.jpg'
+    # },{
+    #     'ISBN': 'isbn',
+    #     'author': 'author',
+    #     'publisher': 'publisher',
+    #     'total_number': 20,
+    #     'left_number': 13,
+    #     'intro': 'this is a string of introduction',
+    #     'title': 'book title',
+    #     'surface': 'http://XXX/xxx.jpg'
+    # }]
     return HttpResponse(json.dumps({'book_list': book_list}))
 
 def query_all_tags(request):
     # mock data
     tags = ['tag1', 'tag2', 'tag3', 'tag4', 'tag5']
     return HttpResponse(json.dumps({'tags': tags}))
-
-def create_book(request):
-    book = request.GET.get('newBook')
-    book = json.loads(book)
-    print type(book)
-    print book['ISBN']
-    print book['author']
-    print book['publisher']
-    print book['total_number']
-    print book['left_number']
-    print book['intro']
-    print book['title']
-    print book['surface']
-    print book['tag']
-    # TODO: check tag if in tags table, if not, create one
-    # TODO: create book in database
-    return HttpResponse(json.dumps({'createStatus': 200}))
-
-def delete_book(request):
-    book_list = request.GET.get('delete_book_list')
-    book_list = json.loads(book_list)
-    print type(book_list)
-    for book in book_list:
-        print book
-    # delete from database
-    return HttpResponse(json.dumps({'deleteStatus': 200}))
 
 def renew(request):
     book_list = request.GET.get('renew_book_list')

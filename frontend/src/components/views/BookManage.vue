@@ -256,8 +256,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // TODO:
-          // tell the server to add book
           this.deal_create_book()
         }).catch(() => {
           this.$message({
@@ -272,8 +270,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // TODO:
-          // tell the server to add book
           this.deal_delete_book()
         }).catch(() => {
           this.$message({
@@ -347,6 +343,8 @@
               message: '上架成功!'
             })
             // should clear the data?
+          } else if (res.data.createStatus === 500) {
+            this.$message.error('上架失败')
           }
           console.log('creating a book, === end ===')
         }, (err) => {
@@ -367,8 +365,10 @@
               this.$message.success('下架成功')
               // TODO: delete selected book from local tableData list
               // TODO: what to show next?
+            } else if (res.data.deleteStatus === 500) {
+              this.$message.error('下架失败')
+              console.log('some book delete fail')
             }
-            console.log()
             console.log('deleting a book, === end ===')
           }, (err) => {
             console.log('deleting a book, got error, error msg: === start ===')

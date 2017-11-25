@@ -7,7 +7,7 @@ from views import query_book
 from views import query_all_tags
 from controllers import create_book
 from controllers import delete_book
-from views import renew
+from controllers import renew
 urlpatterns = [
     url(r'^verify_account/', verify_account),
     url(r'^get_borrow_status/', get_borrow_status),

@@ -148,13 +148,15 @@
       },
       deal_renew () {
         if (this.selectedBookList.length !== 0) {
-          this.$http.get('/api/renew', {
-            params: {
-              'renew_book_list': JSON.stringify(this.selectedBookList)
-            }
-          }).then((res) => {
+          let obj = {
+            'renew_book_list': JSON.stringify(this.selectedBookList)
+          }
+          var qs = require('qs')
+          this.$http.post('/api/renew/', qs.stringify(obj)).then((res) => {
             if (res.data.renewStatus === 200) {
               this.$message.success('成功为' + this.selectedBookList.length + '本书续期!')
+              // console.log(res.data.new_book_list)
+              this.deal_borrow_status_query()
             }
           }, (err) => {
             console.log('renewing books, got error, error msg: === start ===')

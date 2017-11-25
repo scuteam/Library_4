@@ -4,12 +4,13 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
+
 from controllers import Query_book
 # Create your views here.
 def verify_account(request):
-    account = request.GET.get('account')
-    password = request.GET.get('password')
-    role = request.GET.get('role')
+    account = request.POST.get('account')
+    password = request.POST.get('password')
+    role = request.POST.get('role')
     if role == 'user':
         if account == 'user' and password == 'user':
             return HttpResponse(json.dumps({'loginStatus': 200}))
@@ -130,12 +131,3 @@ def query_all_tags(request):
     tags = ['tag1', 'tag2', 'tag3', 'tag4', 'tag5']
     return HttpResponse(json.dumps({'tags': tags}))
 
-def renew(request):
-    book_list = request.GET.get('renew_book_list')
-    book_list = json.loads(book_list)
-    print type(book_list)
-    for book in book_list:
-        print book
-        # TODO: add 15 days to the returnDate
-    # renew from database
-    return HttpResponse(json.dumps({'renewStatus': 200}))

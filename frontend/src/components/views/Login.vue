@@ -69,13 +69,13 @@
         console.log('account:', this.account)
         console.log('password:', this.password)
         console.log('role:', this.role)
-        this.$http.get('/api/verify_account/', {
-          'params': {
-            account: this.account,
-            password: this.password,
-            role: this.role
-          }
-        })
+        let obj = {
+          account: this.account,
+          password: this.password,
+          role: this.role
+        }
+        var qs = require('qs')
+        this.$http.post('/api/verify_account/', qs.stringify(obj))
           .then((res) => {
             console.log('success')
             if (res.data.loginStatus === 200) {

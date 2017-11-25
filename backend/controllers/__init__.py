@@ -5,3 +5,5 @@ from Book_manage import delete_book
 from Book_manage import get_book
 
 from Query_book import query_book
+
+from Renew import renew

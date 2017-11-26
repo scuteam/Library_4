@@ -7,7 +7,7 @@ class Book(models.Model):
     publisher = models.CharField(max_length=40, db_column='publisher')
     total_number = models.IntegerField(db_column='total_number')
     left_number = models.IntegerField(db_column='left_number')
-    intro = models.CharField(max_length=10240, blank=True, db_column='intro')
+    intro = models.TextField(blank=True, db_column='intro')
     title = models.CharField(max_length=50, db_column='title')
     surface = models.CharField(max_length=40, db_column='surface')
 

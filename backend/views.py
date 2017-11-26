@@ -4,35 +4,10 @@ from __future__ import unicode_literals
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
-
 from controllers import Query_book
+
 # Create your views here.
-def verify_account(request):
-    account = request.POST.get('account')
-    password = request.POST.get('password')
-    role = request.POST.get('role')
-    if role == 'user':
-        if account == 'user' and password == 'user':
-            return HttpResponse(json.dumps({'loginStatus': 200}))
-        else:
-            return HttpResponse(json.dumps({'loginStatus': 304, 'reason': 'name or role incorrect'}))
-    elif role == 'bookManager':
-        if account == 'bookManage' and password == 'bookManage':
-            return HttpResponse(json.dumps({'loginStatus': 200}))
-        else:
-            return HttpResponse(json.dumps({'loginStatus': 304, 'reason': 'name or role incorrect'}))
-    elif role == 'innerOperator':
-        if account == 'innerOperator' and password == 'innerOperator':
-            return HttpResponse(json.dumps({'loginStatus': 200}))
-        else:
-            return HttpResponse(json.dumps({'loginStatus': 304, 'reason': 'name or role incorrect'}))
-    elif role == 'reception':
-        if account == 'reception' and password == 'reception':
-            return HttpResponse(json.dumps({'loginStatus': 200}))
-        else:
-            return HttpResponse(json.dumps({'loginStatus': 304, 'reason': 'name or role incorrect'}))
-    else:
-        return HttpResponse(json.dumps({'loginStatus': 404, 'reason': 'role not found'}))
+
 
 def get_borrow_status(request):
     account = request.GET.get('account')
@@ -126,8 +101,5 @@ def query_book(request):
     # }]
     return HttpResponse(json.dumps({'book_list': book_list}))
 
-def query_all_tags(request):
-    # mock data
-    tags = ['tag1', 'tag2', 'tag3', 'tag4', 'tag5']
-    return HttpResponse(json.dumps({'tags': tags}))
+
 

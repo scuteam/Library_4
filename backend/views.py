@@ -62,6 +62,7 @@ def get_borrow_status(request):
     response['Access-Control-Allow-Credentials'] = 'true'  # add it to prevent 'ACAC is not allow to be '',and should be *'
     return response
 
+
 def query_book(request):
     query_type = request.GET.get('query_type')
     query_keyword = request.GET.get('query_keyword')

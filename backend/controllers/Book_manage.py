@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 import json
 from backend.services import Book_manage
 
 
+@login_required
 def create_book(request):
     book = request.GET.get('newBook')
     book = json.loads(book)
@@ -40,6 +42,7 @@ def update_book():
     pass
 
 
+@login_required
 def delete_book(request):
     book_list = request.GET.get('delete_book_list')
     book_list = json.loads(book_list)

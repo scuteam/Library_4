@@ -3,6 +3,7 @@ from django.http import HttpResponse
 import json
 from backend.services import Book_manage
 
+
 def create_book(request):
     book = request.GET.get('newBook')
     book = json.loads(book)
@@ -30,11 +31,14 @@ def create_book(request):
     else:
         return HttpResponse(json.dumps({'createStatus': 500}))
 
+
 def get_book_all():
     pass
 
+
 def update_book():
     pass
+
 
 def delete_book(request):
     book_list = request.GET.get('delete_book_list')
@@ -46,8 +50,15 @@ def delete_book(request):
         print book  # {'bookAuthor': u'author', u'bookName': u'test_book', u'ISBN': u'1234567890123'}
         is_success = Book_manage.delete(book['ISBN'])
         if not is_success:
-            return HttpResponse(json.dumps({'deleteStatus': 500}))
-    return HttpResponse(json.dumps({'deleteStatus': 200}))
+            response = HttpResponse(json.dumps({'deleteStatus': 500}))
+            response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+            response['Access-Control-Allow-Credentials'] = 'true'
+            return response
+    response = HttpResponse(json.dumps({'deleteStatus': 200}))
+    response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+    response['Access-Control-Allow-Credentials'] = 'true'
+    return response
+
 
 def get_book():
     pass

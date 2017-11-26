@@ -14,6 +14,10 @@ def get_borrow_status(request):
     print account
     # query borrow_status and history_borrow_record by account
     # some temporary example data
+    if request.user.is_authenticated():
+        print 'is authenticated'
+    else:
+        print 'not authenticated yet'
     tmpBorrowTableData = [{
             'ISBN': 111,
             'bookName': 'borrow1',
@@ -50,10 +54,13 @@ def get_borrow_status(request):
             'borrowDate': '55',
             'returnDate': '2017-11-05'
         }]
-    return HttpResponse(json.dumps({
+    response = HttpResponse(json.dumps({
         'borrowTableData': tmpBorrowTableData,
         'historyTableData': tmpHistoryTableData
     }))
+    response['access-Control-Allow-Origin'] = '127.0.0.1:8080'  # add it to prevent 'ACAO is not allow to be *'
+    response['Access-Control-Allow-Credentials'] = 'true'  # add it to prevent 'ACAC is not allow to be '',and should be *'
+    return response
 
 def query_book(request):
     query_type = request.GET.get('query_type')

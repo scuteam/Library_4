@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import HttpResponse
 from django.contrib.auth import authenticate
-import json
 from backend.models import User
 from backend.models import Role
 

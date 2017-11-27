@@ -1,27 +1,29 @@
 <template>
   <div id="renew">
     <NavTitleBar :navTitleText="navTitleText" :navButtonText="navButtonText"></NavTitleBar>
-    <el-container style="height: 610px; border: 1px solid #eee">
-      <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+    <el-container id="container">
+      <el-aside width="200px" id="aside">
         <el-menu
-          default-active="1"
+          default-active="borrowStatus"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
           @select="handleMenuSelection">
-          <el-menu-item index="1">
+          <el-menu-item index="borrowStatus">
             <span slot="title">借阅状态</span>
           </el-menu-item>
-          <el-menu-item index="2">
+          <el-menu-item index="historyBorrowRecord">
             <span slot="title">历史借阅</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
       <el-main>
-        <el-table ref="multiSelectionTable" :data="tableData"
+        <el-table ref="multiSelectionTable"
+                  id="bookTable"
+                  :data="tableData"
                   :default-sort="{prop: 'returnDate', order: 'ascending'}"
                   @selection-change="handleSelectionChange">
-          <el-table-column type="selection" v-if="activeIndex=='1'" width="55">
+          <el-table-column type="selection" v-if="activeIndex=='borrowStatus'" width="55">
           </el-table-column>
           <el-table-column prop="ISBN" label="ISBN">
             <template slot-scope="scope">
@@ -67,7 +69,7 @@
       return {
         navTitleText: '用户',
         navButtonText: '注销',
-        activeIndex: '1',
+        activeIndex: 'borrowStatus',
         borrowTableData: [],
         historyTableData: [],
         tableData: [],
@@ -76,58 +78,17 @@
       }
     },
     mounted: function () {
-      // example data which got by http
-      let tmpBorrowTableData = [{
-        'ISBN': 111,
-        'bookName': 'borrow1',
-        'borrowDate': '22',
-        'returnDate': '2017-10-11'
-      },
-      {
-        'ISBN': 222,
-        'bookName': 'borrow2',
-        'borrowDate': '44',
-        'returnDate': '2017-10-25'
-      },
-      {
-        'ISBN': 333,
-        'bookName': 'borrow3',
-        'borrowDate': '55',
-        'returnDate': '2017-10-09'
-      }]
-      let tmpHistoryTableData = [{
-        'ISBN': 111,
-        'bookName': 'history1',
-        'borrowDate': '22',
-        'returnDate': '2017-11-06'
-      },
-      {
-        'ISBN': 222,
-        'bookName': 'history2',
-        'borrowDate': '44',
-        'returnDate': '2017-11-04'
-      },
-      {
-        'ISBN': 333,
-        'bookName': 'history3',
-        'borrowDate': '55',
-        'returnDate': '2017-11-05'
-      }]
-      this.borrowTableData = tmpBorrowTableData
-      this.historyTableData = tmpHistoryTableData
-      // initial
-      this.tableData = this.borrowTableData
+      console.log('router params is ' + this.$route.params.account)
+      this.deal_borrow_status_query()
     },
     methods: {
       handleMenuSelection (index) {
-        if (index === '1') {
-          this.activeIndex = '1'
+        if (index === 'borrowStatus') {
+          this.activeIndex = 'borrowStatus'
           this.tableData = this.borrowTableData
-          this.buttonVisible = true
-        } else if (index === '2') {
-          this.activeIndex = '2'
+        } else if (index === 'historyBorrowRecord') {
+          this.activeIndex = 'historyBorrowRecord'
           this.tableData = this.historyTableData
-          this.buttonVisible = false
         }
       },
       handleSelectionChange (val) {
@@ -148,24 +109,80 @@
         console.log('renewing books === start ===')
         for (let i = 0; i < this.selectedBookList.length; i++) {
           console.log(this.selectedBookList[i])
-          // request backend to deal
-          // waiting for result
-          // message to user
-          // remove it from table data
         }
-        this.$message.success('成功为' + this.selectedBookList.length + '本书续期!')
-        console.log('renewing books === start ===')
+        this.$confirm('确认为所选图书续期吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deal_renew()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消续期'
+          })
+        })
+        console.log('renewing books === end ===')
       },
       sortDate (a, b) {
         let dateA = new Date(a)
         let dateB = new Date(b)
         return dateA > dateB
+      },
+      deal_borrow_status_query () {
+        // query borrow status
+        this.$http.get('/api/get_borrow_status/', {
+          params: {account: this.$route.params.account}
+        }).then((res) => {
+          let tmpBorrowTableData = res.data.borrowTableData
+          let tmpHistoryTableData = res.data.historyTableData
+          this.borrowTableData = tmpBorrowTableData
+          this.historyTableData = tmpHistoryTableData
+          // initial
+          this.tableData = this.borrowTableData
+        }, (err) => {
+          console.log('处理借阅状态查询过程出现错误,错误信息如下:')
+          console.log(err)
+          console.log('错误信息输出完毕')
+        })
+      },
+      deal_renew () {
+        if (this.selectedBookList.length !== 0) {
+          this.$http.get('/api/renew', {
+            params: {
+              'renew_book_list': JSON.stringify(this.selectedBookList)
+            }
+          }).then((res) => {
+            if (res.data.renewStatus === 200) {
+              this.$message.success('成功为' + this.selectedBookList.length + '本书续期!')
+            }
+          }, (err) => {
+            console.log('renewing books, got error, error msg: === start ===')
+            console.log(err)
+            console.log('renewing books, got error, error msg: === end ===')
+          })
+        }
+        // request backend to deal
+        // waiting for result
+        // message to user
+        // remove it from table data
       }
     }
   }
 </script>
 
 <style scoped lang="stylus">
+  #containter {
+    height: 610px
+    border: 1px solid #eee
+  };
+  #aside {
+    background-color: rgb(238, 241, 246)
+  };
+  #bookTable {
+    margin-top 20px
+    margin-left 20px
+  };
   #multiRenew {
     margin-top 50px
     float right

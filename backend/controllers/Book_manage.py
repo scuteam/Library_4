@@ -1,37 +1,52 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+import os
+import os.path
 import json
 from backend.services import Book_manage
 
 
 @login_required
 def create_book(request):
-    book = request.GET.get('newBook')
-    book = json.loads(book)
-    print type(book)
-    print book['ISBN']
-    print book['author']
-    print book['publisher']
-    print book['total_number']
-    print book['left_number']
-    print book['intro']
-    print book['title']
-    print book['surface']
-    print book['tag']
+    ISBN = request.POST.get('ISBN')
+    author = request.POST.get('author')
+    publisher = request.POST.get('publisher')
+    total_number = request.POST.get('total_number')
+    left_number = request.POST.get('left_number')
+    intro = request.POST.get('intro')
+    title = request.POST.get('title')
+    surface = ''
+    print ISBN,author,publisher,total_number,left_number,intro,title
+    # for surface img
+    dir = 'static/image/'
+    # print os.listdir()
+    list = os.listdir(dir)
+    print list
+    for line in list:
+        file_path = os.path.join(dir,line)
+        if os.path.isfile(file_path):
+            if line.startswith(ISBN):
+                surface = '/static/image/'+line
+    #print book['surface']
+    #print book['tag']
     # TODO: check tag if in tags table, if not, create one
-    is_success = Book_manage.create(new_ISBN=book['ISBN'],
-                       new_author=book['author'],
-                       new_intro=book['intro'],
-                       new_left_number=book['left_number'],
-                       new_publisher=book['publisher'],
-                       new_surface=book['surface'],
-                       new_total_number=book['total_number'],
-                       new_title=book['title'])
-    if is_success:
-        return HttpResponse(json.dumps({'createStatus': 200}))
-    else:
-        return HttpResponse(json.dumps({'createStatus': 500}))
+    is_success = Book_manage.create(new_ISBN=ISBN,
+                       new_author=author,
+                       new_intro=intro,
+                       new_left_number=left_number,
+                       new_publisher=publisher,
+                       new_surface=surface,
+                       new_total_number=total_number,
+                       new_title=title)
+    create_status = 200
+    if not is_success:
+        create_status = 500
+    response = HttpResponse(json.dumps({'createStatus': create_status}))
+    response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+    response['Access-Control-Allow-Credentials'] = 'true'
+    return response
+
 
 
 def get_book_all():
@@ -66,3 +81,18 @@ def delete_book(request):
 def get_book():
     pass
 
+
+def upload_book_surface(request):
+    print 'call this function'
+    file = request.FILES.get('file')
+    print file
+    with open("static/image/%s" % file.name, 'wb+') as f:
+        # 分块写入文件
+        for chunk in file.chunks():
+            f.write(chunk)
+    print 'write over'
+    response = HttpResponse(json.dumps({'uploadStatus': 200}))
+    response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+    response['Access-Control-Allow-Credentials'] = 'true'
+    return response
+    #return HttpResponse("upload over!")

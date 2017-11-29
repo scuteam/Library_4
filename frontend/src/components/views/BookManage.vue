@@ -80,8 +80,9 @@
               <el-col :offset="9">
                 <el-upload
                   class="avatar-uploader"
-                  action=""
+                  action="http://localhost:8000/api/upload_book_surface/"
                   :show-file-list="false"
+                  :auto-upload="true"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
                   <img v-if="bookImageUrl" :src="bookImageUrl" class="avatar">
@@ -192,9 +193,7 @@
     },
     mounted: function () {
       console.log('account is' + this.$route.params.account)
-      // TODO:
-      // get total tags from server
-      this.$http.get('/api/query_all_tags')
+      this.$http.get('/api/query_all_tags/')
         .then((res) => {
           this.totalTags.length = 0 // clear the data
           let index = 1
@@ -333,25 +332,26 @@
           'surface': this.bookImageUrl,
           'tag': this.hasTagsLabelList
         }
-        this.$http.get('/api/create_book/', {
-          params: {'newBook': newBook}
-        }).then((res) => {
-          console.log('creating a book, === start ===')
-          if (res.data.createStatus === 200) {
-            this.$message({
-              type: 'success',
-              message: '上架成功!'
-            })
+        var qs = require('qs')
+        this.$http.post('/api/create_book/', qs.stringify(newBook))
+          .then((res) => {
+            console.log('creating a book, === start ===')
+            if (res.data.createStatus === 200) {
+              this.$message({
+                type: 'success',
+                message: '上架成功!'
+              })
+              console.log('image url is' + this.bookImageUrl)
             // should clear the data?
-          } else if (res.data.createStatus === 500) {
-            this.$message.error('上架失败')
-          }
-          console.log('creating a book, === end ===')
-        }, (err) => {
-          console.log('creating a book, got error, error msg === start ===')
-          console.log(err)
-          console.log('creating a book, got error, error msg === end ===')
-        })
+            } else if (res.data.createStatus === 500) {
+              this.$message.error('上架失败')
+            }
+            console.log('creating a book, === end ===')
+          }, (err) => {
+            console.log('creating a book, got error, error msg === start ===')
+            console.log(err)
+            console.log('creating a book, got error, error msg === end ===')
+          })
       },
       deal_delete_book () {
         if (this.selectedBookList.length !== 0) {

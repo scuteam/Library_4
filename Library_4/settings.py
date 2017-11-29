@@ -125,6 +125,7 @@ STATIC_URL = '/static/'
 # Add for vuejs
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/static"),
+    os.path.join(BASE_DIR, "static"),  # for image/  book surface img
 ]
 
 CSRF_COOKIE_NAME = "XSRF-TOKEN"

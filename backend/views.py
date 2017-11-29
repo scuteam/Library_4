@@ -1,66 +1,69 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from django.contrib import auth
 from django.http import HttpResponse
 import json
 from controllers import Query_book
 
 # Create your views here.
 
-
-def get_borrow_status(request):
-    account = request.GET.get('account')
-    print account
-    # query borrow_status and history_borrow_record by account
-    # some temporary example data
-    if request.user.is_authenticated():
-        print 'is authenticated'
-    else:
-        print 'not authenticated yet'
-    tmpBorrowTableData = [{
-            'ISBN': 111,
-            'bookName': 'borrow1',
-            'borrowDate': '22',
-            'returnDate': '2017-10-11'
-        },
-        {
-            'ISBN': 222,
-            'bookName': 'borrow2',
-            'borrowDate': '44',
-            'returnDate': '2017-10-25'
-        },
-        {
-            'ISBN': 333,
-            'bookName': 'borrow3',
-            'borrowDate': '55',
-            'returnDate': '2017-10-09'
-        }]
-    tmpHistoryTableData = [{
-            'ISBN': 111,
-            'bookName': 'history1',
-            'borrowDate': '22',
-            'returnDate': '2017-11-06'
-        },
-        {
-            'ISBN': 222,
-            'bookName': 'history2',
-            'borrowDate': '44',
-            'returnDate': '2017-11-04'
-        },
-        {
-            'ISBN': 333,
-            'bookName': 'history3',
-            'borrowDate': '55',
-            'returnDate': '2017-11-05'
-        }]
-    response = HttpResponse(json.dumps({
-        'borrowTableData': tmpBorrowTableData,
-        'historyTableData': tmpHistoryTableData
-    }))
-    response['access-Control-Allow-Origin'] = '127.0.0.1:8080'  # add it to prevent 'ACAO is not allow to be *'
-    response['Access-Control-Allow-Credentials'] = 'true'  # add it to prevent 'ACAC is not allow to be '',and should be *'
-    return response
+#
+# def get_borrow_status(request):
+#     user = request.user
+#     print user.username
+#     # account = request.GET.get('account')
+#     # print account
+#     # query borrow_status and history_borrow_record by account
+#     # some temporary example data
+#     if request.user.is_authenticated():
+#         print 'is authenticated'
+#     else:
+#         print 'not authenticated yet'
+#     tmpBorrowTableData = [{
+#             'ISBN': 111,
+#             'bookName': 'borrow1',
+#             'borrowDate': '22',
+#             'returnDate': '2017-10-11'
+#         },
+#         {
+#             'ISBN': 222,
+#             'bookName': 'borrow2',
+#             'borrowDate': '44',
+#             'returnDate': '2017-10-25'
+#         },
+#         {
+#             'ISBN': 333,
+#             'bookName': 'borrow3',
+#             'borrowDate': '55',
+#             'returnDate': '2017-10-09'
+#         }]
+#     tmpHistoryTableData = [{
+#             'ISBN': 111,
+#             'bookName': 'history1',
+#             'borrowDate': '22',
+#             'returnDate': '2017-11-06'
+#         },
+#         {
+#             'ISBN': 222,
+#             'bookName': 'history2',
+#             'borrowDate': '44',
+#             'returnDate': '2017-11-04'
+#         },
+#         {
+#             'ISBN': 333,
+#             'bookName': 'history3',
+#             'borrowDate': '55',
+#             'returnDate': '2017-11-05'
+#         }]
+#
+#     response = HttpResponse(json.dumps({
+#         'borrowTableData': tmpBorrowTableData,
+#         'historyTableData': tmpHistoryTableData
+#     }))
+#     response['access-Control-Allow-Origin'] = '127.0.0.1:8080'  # add it to prevent 'ACAO is not allow to be *'
+#     response['Access-Control-Allow-Credentials'] = 'true'  # add it to prevent 'ACAC is not allow to be '',and should be *'
+#     return response
 
 
 def query_book(request):
@@ -110,4 +113,9 @@ def query_book(request):
     return HttpResponse(json.dumps({'book_list': book_list}))
 
 
-
+def logout(request):
+    auth.logout(request)
+    response = HttpResponse(json.dumps({'logoutStatus': 200}))
+    response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+    response['Access-Control-Allow-Credentials'] = 'true'
+    return response

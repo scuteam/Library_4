@@ -67,9 +67,9 @@
     },
     methods: {
       handle_status_change: function (visible) {
-        if(!visible){
+        if (!visible) {
           this.$emit('close')
-        } 
+        }
       }
     }
   }

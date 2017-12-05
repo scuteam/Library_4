@@ -5,21 +5,13 @@
       <el-carousel indicator-position="outside" height="580px">
         <el-carousel-item  :key="1">
           <div>
-            <div align="center">
+            <div id="photo" align="center">
               <img src="../../assets/logo.png">
             </div>
             <el-row :gutter="20">
               <el-col :span="12" :offset="6">
-                <div style="margin-top: 15px;">
-                  <el-input placeholder="请输入搜索内容" v-model="input5" class="input-with-select">
-                    <el-select v-model="borrowType" slot="prepend" placeholder="书名">
-                      <el-option label="书名" value="bookName"></el-option>
-                      <el-option label="书籍出版社" value="bookPublisher"></el-option>
-                      <el-option label="作者" value="bookAuthor"></el-option>
-                      <el-option label="ISBN" value="bookISBN"></el-option>
-                    </el-select>
-                    <el-button slot="append" icon="el-icon-search"></el-button>
-                  </el-input>
+                <div id="search-bar">
+                  <search-bar></search-bar>
                 </div>
               </el-col>
             </el-row>
@@ -35,16 +27,18 @@
 
 <script>
   import NavTitleBar from '../templates/NavTitleBar.vue'
+  import SearchBar from '../templates/SearchBar.vue'
   export default {
     name: 'borrow',
     components: {
-      NavTitleBar
+      NavTitleBar,
+      SearchBar
     },
     data () {
       return {
+        searchContent: '',
         navTitleText: '网上图书管理系统',
-        navButtonText: '登录',
-        borrowType: 'bookName'
+        navButtonText: '登录'
       }
     }
 
@@ -52,9 +46,15 @@
 </script>
 <style>
   .el-select .el-input {
-    width: 130px;
+    width: 130px
   }
   .input-with-select .el-input-group__prepend {
-    background-color: #fff;
+    background-color: #fff
+  }
+  #search-bar {
+    margin-top: 30px
+  }
+  #photo {
+    margin-top: 20px
   }
 </style>

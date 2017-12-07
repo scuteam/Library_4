@@ -19,6 +19,7 @@
       </el-aside>
       <el-main>
         <book-return v-show="returnBookVisible"></book-return>
+        <user-add id="user-add" v-show="userAddVisible"></user-add>
       </el-main>
     </el-container>
   </div>
@@ -27,11 +28,13 @@
 <script>
   import NavTitleBar from '../../templates/NavTitleBar.vue'
   import BookReturn from './BookReturnBorrow.vue'
+  import UserAdd from './UserAdd.vue'
   export default {
     name: 'bookManage',
     components: {
       NavTitleBar,
-      BookReturn
+      BookReturn,
+      UserAdd
     },
     data () {
       return {
@@ -39,7 +42,8 @@
         navButtonText: '注销',
         activeIndex: 'bookReturn',
         totalTags: [],
-        returnBookVisible: true
+        returnBookVisible: true,
+        userAddVisible: true
       }
     },
     mounted: function () {
@@ -48,11 +52,12 @@
       handleMenuSelection (index) {
         if (index === 'bookAdd') {
           this.activeIndex = 'bookAdd'
-          this.bookAddVisible = true
+          this.userAddVisible = true
           this.returnBookVisible = false
         } else if (index === 'bookReturn') {
           this.activeIndex = 'bookReturn'
           this.returnBookVisible = true
+          this.userAddVisible = false
         }
       }
     }
@@ -67,4 +72,6 @@
   #aside {
     background-color: rgb(238, 241, 246)
   }
+  #user-add
+    margin-top: 60px
 </style>

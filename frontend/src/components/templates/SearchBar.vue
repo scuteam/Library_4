@@ -25,7 +25,7 @@
         console.log('searching === end ===')
         let win = this
         // query book
-        this.$http.get('/api/query_book', {
+        this.$http.get('/api/query_book/', {
           'params': {
             query_type: this.searchType,
             query_keyword: this.searchContent

@@ -23,10 +23,18 @@
     methods: {
       handleClick () {
         if (this.buttonText === '登录') {
-          // 跳转到 /Login
           this.$router.push('/login')
         } else if (this.buttonText === '注销') {
           // 注销,且跳转到主界面?还是登录界面
+          this.$http.post('/api/logout/')
+            .then((res) => {
+              if (res.data.logoutStatus === 200) {
+                this.$message.success('注销成功')
+              }
+            }, (err) => {
+              console.log('注销过程出错,错误信息如下:')
+              console.log(err)
+            })
           this.$router.push('/')
         }
       }

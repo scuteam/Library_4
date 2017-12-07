@@ -2,7 +2,7 @@
   <div>
     <NavTitleBar :navTitleText="navTitleText" :navButtonText="navButtonText"></NavTitleBar>
     <div>
-      <el-carousel indicator-position="outside" height="580px">
+      <el-carousel indicator-position="outside" height="580px" :autoplay="false">
         <el-carousel-item  :key="1">
           <div>
             <div id="photo" align="center">

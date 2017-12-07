@@ -1,31 +1,36 @@
 <template>
-  <el-dialog title="书籍详细信息" :visible="bookInfoVisible" @update:visible='handle_status_change'>
+  <el-dialog title="书籍详细信息" :visible="bookInfoVisible" :modal="false" @update:visible='handle_status_change'>
     <el-row id='book-info'>
       <el-col :span='8'>
         <div>
           <el-row>
             <el-col>
-              <p>ISBN: {{ bookISBN }}</p>
+              <p>ISBN: {{ ISBN }}</p>
             </el-col>
           </el-row>
           <el-row>
             <el-col>
-              <p>书名: {{ bookName }}</p>
+              <p>书名: {{ title }}</p>
             </el-col>
           </el-row>
           <el-row>
             <el-col>
-              <p>作者: {{ bookAuthor }}</p>
+              <p>作者: {{ author }}</p>
             </el-col>
           </el-row>
           <el-row>
             <el-col>
-              <p>出版社: {{ bookPublisher }}</p>
+              <p>出版社: {{ publisher }}</p>
             </el-col>
           </el-row>
           <el-row>
             <el-col>
-              <p>数量: {{ bookNumber }}</p>
+              <p>数量: {{ total_number }}</p>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col>
+              <p>剩余: {{ left_number }}</p>
             </el-col>
           </el-row>
           <el-row>
@@ -33,7 +38,7 @@
               <p>简介:</p>
             </el-col>
             <el-col :span='15'>
-              <p>{{ bookIntroduction }}</p>
+              <p>{{ intro }}</p>
             </el-col>
           </el-row>
         </div>
@@ -41,7 +46,7 @@
       <el-col :span="11" :offset="1">
         <el-row>
           <el-col :offset="9">
-            <img v-if="bookImageUrl" :src="bookImageUrl" class="avatar">
+            <img v-if="surface" :src="surface" class="avatar">
             <i v-else class="el-icon-picture avatar-uploader-icon"></i>
           </el-col>
         </el-row>
@@ -53,22 +58,33 @@
 <script>
   export default {
     name: 'bookInfo',
-    props: ['bookInfoVisible'],
+    props: ['bookInfoVisible', 'bookInfo'],
     data () {
       return {
-        bookISBN: '',
-        bookName: '',
-        bookAuthor: '',
-        bookPublisher: '',
-        bookNumber: '',
-        bookIntroduction: '',
-        bookImageUrl: ''
+        ISBN: '',
+        title: '',
+        total_number: '',
+        author: '',
+        left_number: '',
+        intro: '',
+        surface: '',
+        publisher: ''
       }
     },
     methods: {
       handle_status_change: function (visible) {
         if (!visible) {
           this.$emit('close')
+        }
+        else {
+          this.ISBN = this.bookInfo.ISBN
+          this.title = this.bookInfo.title
+          this.total_number = this.bookInfo.total_number
+          this.author = this.bookInfo.author
+          this.left_number = this.bookInfo.left_number
+          this.intro = this.bookInfo.intro
+          this.surface = this.bookInfo.surface
+          this.publisher = this.bookInfo.publisher
         }
       }
     }
@@ -85,10 +101,12 @@
     text-align: center
   }
   .avatar {
-    width: 120px
-    height: 150px
+    width: 150px
+    height: 200px
     border 3px
     border-color #528CE0
     display: block
   }
+  #book-info
+    text-align: left
 </style>

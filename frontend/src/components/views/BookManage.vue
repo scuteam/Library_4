@@ -60,7 +60,7 @@
                   <el-row>
                     <el-col>
                       <el-form-item label="简介"  required="">
-                        <el-input v-model="bookIntroduction" type='textarea' :rows='6'></el-input>
+                        <el-input v-model="bookIntroduction" type="textarea" :rows=6 ></el-input>
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -80,8 +80,9 @@
               <el-col :offset="9">
                 <el-upload
                   class="avatar-uploader"
-                  action=""
+                  action="http://localhost:8000/api/upload_book_surface/"
                   :show-file-list="false"
+                  :auto-upload="true"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload">
                   <img v-if="bookImageUrl" :src="bookImageUrl" class="avatar">
@@ -192,9 +193,7 @@
     },
     mounted: function () {
       console.log('account is' + this.$route.params.account)
-      // TODO:
-      // get total tags from server
-      this.$http.get('/api/query_all_tags')
+      this.$http.get('/api/query_all_tags/')
         .then((res) => {
           this.totalTags.length = 0 // clear the data
           let index = 1
@@ -256,8 +255,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // TODO:
-          // tell the server to add book
           this.deal_create_book()
         }).catch(() => {
           this.$message({
@@ -272,8 +269,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          // TODO:
-          // tell the server to add book
           this.deal_delete_book()
         }).catch(() => {
           this.$message({
@@ -337,23 +332,26 @@
           'surface': this.bookImageUrl,
           'tag': this.hasTagsLabelList
         }
-        this.$http.get('/api/create_book/', {
-          params: {'newBook': newBook}
-        }).then((res) => {
-          console.log('creating a book, === start ===')
-          if (res.data.createStatus === 200) {
-            this.$message({
-              type: 'success',
-              message: '上架成功!'
-            })
+        var qs = require('qs')
+        this.$http.post('/api/create_book/', qs.stringify(newBook))
+          .then((res) => {
+            console.log('creating a book, === start ===')
+            if (res.data.createStatus === 200) {
+              this.$message({
+                type: 'success',
+                message: '上架成功!'
+              })
+              console.log('image url is' + this.bookImageUrl)
             // should clear the data?
-          }
-          console.log('creating a book, === end ===')
-        }, (err) => {
-          console.log('creating a book, got error, error msg === start ===')
-          console.log(err)
-          console.log('creating a book, got error, error msg === end ===')
-        })
+            } else if (res.data.createStatus === 500) {
+              this.$message.error('上架失败')
+            }
+            console.log('creating a book, === end ===')
+          }, (err) => {
+            console.log('creating a book, got error, error msg === start ===')
+            console.log(err)
+            console.log('creating a book, got error, error msg === end ===')
+          })
       },
       deal_delete_book () {
         if (this.selectedBookList.length !== 0) {
@@ -367,8 +365,10 @@
               this.$message.success('下架成功')
               // TODO: delete selected book from local tableData list
               // TODO: what to show next?
+            } else if (res.data.deleteStatus === 500) {
+              this.$message.error('下架失败')
+              console.log('some book delete fail')
             }
-            console.log()
             console.log('deleting a book, === end ===')
           }, (err) => {
             console.log('deleting a book, got error, error msg: === start ===')
@@ -380,7 +380,6 @@
     }
   }
 </script>
-
 <style scoped lang="stylus">
   .avatar-uploader .el-upload {
     border: 5px dashed #51#2b81af

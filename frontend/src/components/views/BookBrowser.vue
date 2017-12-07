@@ -7,35 +7,33 @@
     </el-row>
     <el-row>
       <el-col id='radio-group' :xs="24" :sm="{span: 20, offset: 2}">
-        <el-radio-group v-model="selectTag">
-          <el-radio :label="0">全部</el-radio>
-          <el-radio :label="1">科幻</el-radio>
-          <el-radio :label="2">计算机</el-radio>
-          <el-radio :label="3">教育</el-radio>
-          <el-radio :label="4">历史</el-radio>
+        <el-radio-group v-for="tag in totalTags" :key="tag.key" v-model="selectTag">
+            <el-col :sm="{span: 2, offset: 1}">
+              <el-radio :label="tag.label"> {{ tag.label }} </el-radio>
+            </el-col>
         </el-radio-group>
       </el-col>
     </el-row>
     <el-row>
       <el-col id='book-list' :xs="24" :sm="{span: 20, offset: 2}">
-        <el-table :data="bookData" @row-click='handle_row_click' style="width: 100%">
+        <el-table :data="bookList" @row-click='handle_row_click' style="width: 100%">
           <el-table-column  label="封面">
             <template slot-scope="scope">
-              <img v-if="scope.row.bookImageUrl" :src="scope.row.bookImageUrl"  class="avatar">
+              <img v-if="scope.row.surface" :src="scope.row.surface"  class="avatar">
             </template>
           </el-table-column>
           <el-table-column  label="作者">
             <template slot-scope="scope">
-              <p>{{scope.row.bookAuthor}}</p>
+              <p>{{scope.row.author}}</p>
             </template>
           </el-table-column>
           <el-table-column label="ISBN">
             <template slot-scope="scope">
-              <p>{{scope.row.bookISBN}}</p>
+              <p>{{scope.row.ISBN}}</p>
             </template>
           </el-table-column>
           <el-table-column label="是否在馆">
-            <template slot-scope="scope"> 
+            <template slot-scope="scope">
               <el-tag size="medium">{{ scope.row.available }}</el-tag>
             </template>
           </el-table-column>
@@ -43,9 +41,9 @@
       </el-col>
     </el-row>
     <el-row id='page-control'>
-      <el-pagination layout="prev, pager, next" :total="50"></el-pagination>
+      <el-pagination layout="prev, pager, next" :total="bookList.length" :current-page="currentPage" :page-size="5" @current-change="deal_page_change"></el-pagination>
     </el-row>
-    <BookInfo :book-info-visible='infoVisible' @close="_=>this.infoVisible = false"></BookInfo>
+    <BookInfo :book-info-visible='infoVisible' :book-info="bookInfo" @close="_=>this.infoVisible = false"></BookInfo>
   </div>
 </template>
 <script>
@@ -62,7 +60,11 @@
             bookISBN: '123425'
           }
         ],
-        infoVisible: false
+        bookList: [],
+        bookTagList: [],
+        bookInfo: {},
+        infoVisible: false,
+        currentPage: 0
       }
     },
     components: {
@@ -70,28 +72,86 @@
       BookInfo
     },
     mounted: function () {
-      console.log('account is' + this.$route.params.account)
-      // TODO:
-      // get total tags from server
-      this.$http.get('/api/query_all_tags')
-        .then((res) => {
-          this.totalTags.length = 0 // clear the data
-          let index = 1
-          for (let i = 0; i < res.data.tags.length; i++) {
-            let tmpTag = {
-              key: index,
-              label: res.data.tags[i]
-            }
-            this.totalTags.push(tmpTag)
-            index++
+      this.init_tags()
+      this.init_books()
+    },
+    watch: {
+      bookData: function (nBookData) {
+        var blist = []
+        console.log('bookData update')
+        for (var b of nBookData) {
+          if (b.left_number === 0) {
+            b.available = '不在馆'
+            blist.push(b)
           }
-        }, (err) => {
-          console.log('query all tags from server, query error: === start ===')
-          console.log(err)
-          console.log('query all tags from server, query error: === end ===')
-        })
+          else {
+            b.available = '在馆'
+            blist.push(b)
+          }
+        }
+        this.currentPage = 0
+        this.selectTag = 0
+        this.bookTagList = blist
+        this.bookList = blist.slice(0, 5>=blist.length?blist.length:5)
+      },
+      selectTag: function (tagKey) {
+        var blist =[]
+        console.log(tagKey)
+        for(var b of this.bookData) {
+          if (b.tags.includes(tagKey)){
+            blist.push(b)
+          }
+        }
+        console.log(blist)
+        this.currentPage = 0
+        this.bookTagList = blist
+        this.bookList = blist.slice(0, 5>=blist.length?blist.length:5)
+      }
     },
     methods: {
+      init_tags () {
+        console.log('account is' + this.$route.params.account)
+      // TODO:
+      // get total tags from server
+        this.$http.get('/api/query_all_tags/')
+          .then((res) => {
+            this.totalTags.length = 0 // clear the data
+            let index = 1
+            for (let i = 0; i < res.data.tags.length; i++) {
+              let tmpTag = {
+                key: index,
+                label: res.data.tags[i]
+              }
+              this.totalTags.push(tmpTag)
+              index++
+            }
+          }, (err) => {
+            console.log('query all tags from server, query error: === start ===')
+            console.log(err)
+            console.log('query all tags from server, query error: === end ===')
+          })
+      },
+      init_books () {
+        console.log('searching === start ===')
+        console.log('searching === end ===')
+        // query book
+        this.$http.get('/api/query_book/', {
+          'params': {
+            query_type: 'bookISBN',
+            query_keyword: ''
+          }
+        }).then((res) => {
+          let bookList = res.data.book_list
+          console.log('query book from server, get result: === start ===')
+          console.log(bookList)
+          this.bookData = bookList
+          console.log('query book from server, get result: === end ===')
+        }, (err) => {
+          console.log('query book from server, get error: === start ===')
+          console.log(err)
+          console.log('query book from server, get error: === end ===')
+        })
+      },
       deal_query_book () {
         console.log('searching === start ===')
         console.log('searchType is ' + this.searchType)
@@ -116,19 +176,25 @@
           console.log('query book from server, get error: === end ===')
         })
       },
-      deal_query_result () {
+      deal_query_result (queryResult) {
+        this.bookData = queryResult
       },
-      deal_last_page () {
+      deal_page_change (currentPage) {
+        this.currentPage = currentPage
+        this.bookList = this.bookTagList.slice(currentPage*5, (currentPage+1)*5>=blist.length?blist.length:(currentPage+1)*5)
       },
-      deal_next_page () {
-      },
+
       handle_row_click (bookInfo) {
         this.infoVisible = true
+        this.bookInfo = bookInfo
       }
     }
   }
 </script>
 <<style lang="stylus" scoped>
+  .avatar
+    height: 100px
+    width: 70px
   #search-bar
     margin-top: 50px
   #radio-group
@@ -136,6 +202,8 @@
   #book-list
     margin-top: 20px
     text-align: left
+  #radio-group
+    text-align left
   #page-control
     margin-top: 40px
 </style>

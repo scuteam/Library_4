@@ -148,13 +148,31 @@
       },
       deal_renew () {
         if (this.selectedBookList.length !== 0) {
-          this.$http.get('/api/renew', {
-            params: {
-              'renew_book_list': JSON.stringify(this.selectedBookList)
-            }
-          }).then((res) => {
+          let obj = {
+            'renew_book_list': JSON.stringify(this.selectedBookList)
+          }
+          var qs = require('qs')
+          this.$http.post('/api/renew/', qs.stringify(obj)).then((res) => {
             if (res.data.renewStatus === 200) {
               this.$message.success('成功为' + this.selectedBookList.length + '本书续期!')
+              this.deal_borrow_status_query()
+            } else if (res.data.renewStatus === 304) {
+              let failNum = res.data.fail_list.length
+              let successNum = this.selectedBookList.length - failNum
+              let failBookName = ''
+              for (let i = 0; i < res.data.fail_list.length; i++) {
+                failBookName += res.data.fail_list[i].bookName
+                failBookName += '\n'
+              }
+              console.log(failBookName)
+              this.$message.info('成功续期' + successNum + '本, 失败' + failNum + '本')
+              this.$notify({
+                title: '错误',
+                message: '以下书籍续期失败,续期次数已达到最大\n' + failBookName,
+                type: 'error',
+                duration: 0
+              })
+              console.log(res.data.fail_list)
             }
           }, (err) => {
             console.log('renewing books, got error, error msg: === start ===')

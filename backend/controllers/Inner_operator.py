@@ -71,8 +71,3 @@ def delete_operator(request):
     response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
     response['Access-Control-Allow-Credentials'] = 'true'
     return response
-
-
-
-
-

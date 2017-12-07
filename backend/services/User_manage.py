@@ -2,7 +2,6 @@
 from backend.models import User
 from backend.models import Role
 
-
 def get_all():
     print "user get_all method in services"
     users = []
@@ -16,6 +15,27 @@ def get_all():
         users.append(user)
     return users
 
+def get_by_id(id):
+    user = User.objects.filter(username=id)
+    if user.__len__()==0:
+        return None
+    return user
+
+def get_by_name(name):
+    user =User.objects.filter(name=name)
+    if user.__len__()==0:
+        return None
+    return user
+
+def get(type, info):
+    print "user get_all method in services"
+    switcher = {
+        'id': get_by_id,
+        'name': get_by_name
+    }
+    func = switcher.get(type, lambda : None)
+    user = func(info)
+    return user
 
 def create(account,name,password):
     print 'create invoked'

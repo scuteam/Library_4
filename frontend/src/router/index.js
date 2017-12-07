@@ -7,6 +7,7 @@ import BookManage from '@/components/views/BookManage'
 import Admin from '@/components/views/Admin'
 import InnerOperator from '@/components/views/InnerOperator'
 import UserManage from '@/components/views/UserManage'
+import Operator from '@/components/views/operator/Operator'
 Vue.use(Router)
 
 export default new Router({
@@ -50,6 +51,11 @@ export default new Router({
       path: '/admin',
       name: 'Admin',
       component: Admin
-    }
+    },
+    {
+      path: '/operator',
+      name: 'Operator',
+      component: Operator
+    },
   ]
 })

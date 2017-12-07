@@ -52,4 +52,3 @@ def delete_user(request):
 
 def update_user(request):
     pass
-

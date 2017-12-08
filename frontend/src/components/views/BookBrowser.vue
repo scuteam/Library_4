@@ -16,7 +16,7 @@
     </el-row>
     <el-row>
       <el-col id='book-list' :xs="24" :sm="{span: 20, offset: 2}">
-        <el-table :data="bookList" @row-click='handle_row_click' style="width: 100%">
+        <el-table :data="bookLists" @row-click='handle_row_click' style="width: 100%">
           <el-table-column  label="封面">
             <template slot-scope="scope">
               <img v-if="scope.row.surface" :src="scope.row.surface"  class="avatar">
@@ -41,7 +41,7 @@
       </el-col>
     </el-row>
     <el-row id='page-control'>
-      <el-pagination layout="prev, pager, next" :total="bookList.length" :current-page="currentPage" :page-size="5" @current-change="deal_page_change"></el-pagination>
+      <el-pagination layout="prev, pager, next" :total="bookData.length" :current-page="currentPage" :page-size="5" @current-change="deal_page_change"></el-pagination>
     </el-row>
     <BookInfo :book-info-visible='infoVisible' :book-info="bookInfo" @close="_=>this.infoVisible = false"></BookInfo>
   </div>
@@ -77,21 +77,22 @@
     },
     watch: {
       bookData: function (nBookData) {
-        var blist = []
-        console.log('bookData update')
+        var blist1 = []
         for (var b of nBookData) {
           if (b.left_number === 0) {
             b.available = '不在馆'
-            blist.push(b)
+            blist1.push(b)
           } else {
             b.available = '在馆'
-            blist.push(b)
+            blist1.push(b)
           }
         }
         this.currentPage = 0
         this.selectTag = 0
-        this.bookTagList = blist
-        this.bookList = blist.slice(0, blist.length <= 5 ? blist.length : 5)
+        this.bookTagList = blist1
+        this.bookLists = blist1.slice(0, blist1.length <= 5 ? blist1.length : 5)
+        console.log('bookData update')
+        console.log(this.bookLists)
       },
       selectTag: function (tagKey) {
         var blist = []
@@ -104,14 +105,13 @@
         console.log(blist)
         this.currentPage = 0
         this.bookTagList = blist
-        this.bookList = blist.slice(0, blist.length <= 5 ? blist.length : 5)
+        this.bookLists = blist.slice(0, blist.length <= 5 ? blist.length : 5)
+        console.log('selectTag update')
+        console.log(this.bookLists)
       }
     },
     methods: {
       init_tags () {
-        console.log('account is' + this.$route.params.account)
-      // TODO:
-      // get total tags from server
         this.$http.get('/api/query_all_tags/')
           .then((res) => {
             this.totalTags.length = 0 // clear the data
@@ -151,36 +151,12 @@
           console.log('query book from server, get error: === end ===')
         })
       },
-      deal_query_book () {
-        console.log('searching === start ===')
-        console.log('searchType is ' + this.searchType)
-        console.log('searchContent is ' + this.searchContent)
-        console.log('searching === end ===')
-        let win = this
-        // query book
-        this.$http.get('/api/query_book/', {
-          'params': {
-            query_type: this.searchType,
-            query_keyword: this.searchContent
-          }
-        }).then((res) => {
-          let bookList = res.data.book_list
-          console.log('query book from server, get result: === start ===')
-          console.log(bookList)
-          win.$emit('getQueryResult', bookList)
-          console.log('query book from server, get result: === end ===')
-        }, (err) => {
-          console.log('query book from server, get error: === start ===')
-          console.log(err)
-          console.log('query book from server, get error: === end ===')
-        })
-      },
       deal_query_result (queryResult) {
         this.bookData = queryResult
       },
       deal_page_change (currentPage) {
         this.currentPage = currentPage
-        this.bookList = this.bookTagList.slice(currentPage * 5, (currentPage + 1) * 5 >= this.bookTagList.length ? this.bookTagList.length : (currentPage + 1) * 5)
+        this.bookLists = this.bookTagList.slice(currentPage * 5, (currentPage + 1) * 5 >= this.bookTagList.length ? this.bookTagList.length : (currentPage + 1) * 5)
       },
       handle_row_click (bookInfo) {
         this.infoVisible = true

@@ -4,8 +4,10 @@ from django.contrib.auth.decorators import login_required
 import os
 import os.path
 import json
+from backend.models import Tag
+from backend.models import Has_tag
 from backend.services import Book_manage
-
+from backend.services import Query_all_tags
 
 @login_required
 def create_book(request):
@@ -16,46 +18,52 @@ def create_book(request):
     left_number = request.POST.get('left_number')
     intro = request.POST.get('intro')
     title = request.POST.get('title')
+    tags = request.POST.get('tag')
     surface = ''
     print ISBN,author,publisher,total_number,left_number,intro,title
     # for surface img
     dir = 'static/image/'
     # print os.listdir()
     list = os.listdir(dir)
-    print list
+    # print list
+    # create path
     for line in list:
         file_path = os.path.join(dir,line)
         if os.path.isfile(file_path):
             if line.startswith(ISBN):
                 surface = '/static/image/'+line
-    #print book['surface']
-    #print book['tag']
-    # TODO: check tag if in tags table, if not, create one
-    is_success = Book_manage.create(new_ISBN=ISBN,
-                       new_author=author,
-                       new_intro=intro,
-                       new_left_number=left_number,
-                       new_publisher=publisher,
-                       new_surface=surface,
-                       new_total_number=total_number,
-                       new_title=title)
-    create_status = 200
-    if not is_success:
-        create_status = 500
-    response = HttpResponse(json.dumps({'createStatus': create_status}))
+    if surface == '':
+        surface = '/static/image/default.jpg'
+    # create book
+    book = Book_manage.create(new_ISBN=ISBN,
+                              new_author=author,
+                              new_intro=intro,
+                              new_left_number=left_number,
+                              new_publisher=publisher,
+                              new_surface=surface,
+                              new_total_number=total_number,
+                              new_title=title)
+    if book is None:
+        response = HttpResponse(json.dumps({'createStatus': 500}))
+        response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        return response
+
+    # create tag
+    print tags
+    total_tags = Query_all_tags.query_all_tags()
+    for tag in tags:
+        t = None
+        if tag not in total_tags:
+            t = Tag.objects.create(tag_name=tag)
+        else:
+            t = Tag.objects.get(tag_name=tag)
+        Has_tag.objects.create(book=book,tag=t)
+
+    response = HttpResponse(json.dumps({'createStatus': 200}))
     response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
     response['Access-Control-Allow-Credentials'] = 'true'
     return response
-
-
-
-def get_book_all():
-    pass
-
-
-def update_book():
-    pass
-
 
 @login_required
 def delete_book(request):
@@ -76,10 +84,6 @@ def delete_book(request):
     response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
     response['Access-Control-Allow-Credentials'] = 'true'
     return response
-
-
-def get_book():
-    pass
 
 
 def upload_book_surface(request):

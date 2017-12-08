@@ -33,7 +33,7 @@
 
 <script>
   export default {
-    name: "user-add.vue",
+    name: 'user-add.vue',
     data () {
       return {
         userInfo: {

@@ -78,10 +78,10 @@ export default {
       console.log('selection change === end ===')
     },
     handleQueryResultShow (bookList, id) {
-        this.tableData = bookList
-        this.borrowButtonVisible = true
-        this.id = id
-        console.log('receive data')
+      this.tableData = bookList
+      this.borrowButtonVisible = true
+      this.id = id
+      console.log('receive data')
     },
     handleReturnBook () {
       this.$confirm('确认将所选图书归还吗?', '提示', {
@@ -89,7 +89,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        for (var b of this.selectedBookList){
+        for (var b of this.selectedBookList) {
           this.deal_return_book(b.ISBN)
         }
       }).catch(() => {
@@ -129,7 +129,7 @@ export default {
         this.$http.post('/api/return_book/',
           qs.stringify({
             userId: this.id,
-            bookISBN:  bookISBN
+            bookISBN: bookISBN
           })
         ).then((res) => {
           console.log('deleting a book, === start ===')
@@ -146,15 +146,14 @@ export default {
       }
     },
     deal_query_book () {
-        let win = this
-        // query book
-        var qs = require('qs')
-        this.$http.post('/api/get_borrow_status_by_userInfo/',qs.stringify({
-            userInfoType: 'id',
-            userInfo: this.id
-          })
-        ).then((res) => {
-          if(res.data.getStatus==304){
+      // query book
+      var qs = require('qs')
+      this.$http.post('/api/get_borrow_status_by_userInfo/', qs.stringify({
+        userInfoType: 'id',
+        userInfo: this.id
+      }))
+        .then((res) => {
+          if (res.data.getStatus === 304) {
             this.$message.error('用户不存在')
             return
           }
@@ -164,7 +163,7 @@ export default {
           console.log(err)
           console.log('query book from server, get error: === end ===')
         })
-      }
+    }
   }
 }
 </script>

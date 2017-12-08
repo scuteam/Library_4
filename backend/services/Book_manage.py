@@ -15,12 +15,6 @@ def create(new_ISBN,new_author,new_publisher,
     book.save()
     return book
 
-def get_all():
-    pass
-
-def update():
-    pass
-
 def delete(ISBN):
     book = Book.objects.get(ISBN=ISBN)
     if book is None:
@@ -29,6 +23,3 @@ def delete(ISBN):
     print book
     book.delete()
     return True
-
-def get():
-    pass

@@ -67,8 +67,16 @@
       deal_login () {
         console.log('views.Login.handleLogin ===start===')
         console.log('account:', this.account)
-        console.log('password:', this.password)
+        console.log('password:', this.password, 'ss')
         console.log('role:', this.role)
+        if (this.account === '' || this.password === '') {
+          this.$message.error('输入不能为空')
+          return
+        }
+        if (this.role === '') {
+          this.$message.error('请选择角色')
+          return
+        }
         let obj = {
           account: this.account,
           password: this.password,

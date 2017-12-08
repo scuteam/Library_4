@@ -2,8 +2,8 @@
   <div>
     <NavTitleBar :navTitleText="navTitleText" :navButtonText="navButtonText"></NavTitleBar>
     <div>
-      <el-carousel indicator-position="outside" height="580px" :autoplay="false">
-        <el-carousel-item  :key="1">
+      <el-carousel indicator-position="outside" height="580px" :autoplay="true">
+        <el-carousel-item  :key="0">
           <div>
             <div id="photo" align="center">
               <img src="../../assets/logo.png">
@@ -17,7 +17,7 @@
             </el-row>
           </div>
         </el-carousel-item>
-        <el-carousel-item  :key="2">
+        <el-carousel-item  :key="1">
           <BookBrowser></BookBrowser>
         </el-carousel-item>
       </el-carousel>

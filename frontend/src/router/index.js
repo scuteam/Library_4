@@ -56,6 +56,6 @@ export default new Router({
       path: '/operator',
       name: 'Operator',
       component: Operator
-    },
+    }
   ]
 })

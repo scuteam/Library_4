@@ -1,8 +1,8 @@
 <template>
-  <el-input autofocus placeholder="请输入搜索内容" v-model="searchContent" class="input-with-select">
-    <el-select v-model="searchType" slot="prepend" placeholder="书名">
+  <el-input placeholder="请输入搜索内容" v-model="searchContent" class="input-with-select">
+    <el-select v-model="searchType" slot="prepend" id="search-type" placeholder="书名">
       <el-option label="书名" value="bookName"></el-option>
-      <el-option label="书籍出版社" value="bookPublisher"></el-option>
+      <el-option label="出版社" value="bookPublisher"></el-option>
       <el-option label="作者" value="bookAuthor"></el-option>
       <el-option label="ISBN" value="bookISBN"></el-option>
     </el-select>
@@ -25,7 +25,7 @@
         console.log('searching === end ===')
         let win = this
         // query book
-        this.$http.get('/api/query_book', {
+        this.$http.get('/api/query_book/', {
           'params': {
             query_type: this.searchType,
             query_keyword: this.searchContent
@@ -45,3 +45,9 @@
     }
   }
 </script>
+
+<style>
+  #search-type {
+    width: 90px;
+  }
+</style>

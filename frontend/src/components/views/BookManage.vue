@@ -164,29 +164,11 @@
         bookIntroduction: '',
         bookImageUrl: '',
         totalTags: [],
-//        totalTags: [{key: 1, label: 'tag1'}, {key: 2, label: 'tag2'}, {key: 3, label: 'tag3'},
-//          {key: 4, label: 'tag4'}, {key: 5, label: 'tag5'}, {key: 6, label: 'tag6'},
-//          {key: 7, label: 'tag7'}, {key: 8, label: 'tag8'}, {key: 9, label: 'tag9'}],
         hasTagsIndexList: [],
         hasTagsLabelList: [],
         bookAddVisible: false,
         bookRemoveVisible: true,
         tableData: [],
-//        tableData: [{
-//          'ISBN': 111,
-//          'bookName': 'borrow1',
-//          'bookAuthor': '22'
-//        },
-//        {
-//          'ISBN': 222,
-//          'bookName': 'borrow2',
-//          'bookAuthor': '44'
-//        },
-//        {
-//          'ISBN': 333,
-//          'bookName': 'borrow3',
-//          'bookAuthor': '55'
-//        }],
         multiRemoveButtonVisible: false,
         selectedBookList: []
       }
@@ -239,17 +221,57 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消'
         }).then(({ value }) => {
-          // TODO:
-          // connect to server to tell the database add tags ?
-          // NO! if user add tags and then cancel to add book,
-          // the tags which shouldn't be uploaded to the server actually do
           let tag = {key: this.totalTags.length + 1, label: value}
           this.totalTags.push(tag)
         }).catch(() => {
           console.log('cancel add new tag')
         })
       },
+      validateInput () {
+        if (this.bookISBN === '') {
+          this.$message.error('请填写书籍的ISBN')
+          return false
+        }
+        if (this.bookName === '') {
+          this.$message.error('请填写书籍的名字')
+          return false
+        }
+        if (this.bookAuthor === '') {
+          this.$message.error('请填写书籍的作者')
+          return false
+        }
+        if (this.bookPublisher === '') {
+          this.$message.error('请填写书籍的出版社')
+          return false
+        }
+        if (this.bookNumber === '') {
+          this.$message.error('请填写书籍的数量')
+          return false
+        }
+        if (this.bookIntroduction === '') {
+          this.$message.error('请填写书籍的简介')
+          return false
+        }
+        if (isNaN(Number(this.bookISBN)) || (this.bookISBN.length !== 13)) {
+          this.$message.error('书籍的ISBN应由13位数字组成')
+          return false
+        }
+        if (isNaN(Number(this.bookNumber))) {
+          this.$message.error('书籍的数量应该是数字')
+          return false
+        }
+        let reg = /^[1-9][0-9]*$/
+        if (!reg.test(this.bookNumber)) {
+          this.$message.error('请正确填写书籍的数量')
+          return false
+        }
+        return true
+      },
       handleAddBook () {
+        let isValid = this.validateInput()
+        if (!isValid) {
+          return
+        }
         this.$confirm('确认将该图书上架吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -330,9 +352,9 @@
           'intro': this.bookIntroduction,
           'title': this.bookName,
           'surface': this.bookImageUrl,
-          'tag': this.hasTagsLabelList
+          'tag': JSON.stringify(this.hasTagsLabelList)
         }
-        var qs = require('qs')
+        let qs = require('qs')
         this.$http.post('/api/create_book/', qs.stringify(newBook))
           .then((res) => {
             console.log('creating a book, === start ===')
@@ -342,7 +364,7 @@
                 message: '上架成功!'
               })
               console.log('image url is' + this.bookImageUrl)
-            // should clear the data?
+            // TODO: should clear the data?
             } else if (res.data.createStatus === 500) {
               this.$message.error('上架失败')
             }
@@ -355,7 +377,7 @@
       },
       deal_delete_book () {
         if (this.selectedBookList.length !== 0) {
-          this.$http.get('/api/delete_book', {
+          this.$http.get('/api/delete_book/', {
             params: {
               'delete_book_list': JSON.stringify(this.selectedBookList)
             }
@@ -363,8 +385,14 @@
             console.log('deleting a book, === start ===')
             if (res.data.deleteStatus === 200) {
               this.$message.success('下架成功')
-              // TODO: delete selected book from local tableData list
-              // TODO: what to show next?
+              for (let i = 0; i < this.selectedBookList.length; i++) {
+                let tmpISBN = this.selectedBookList[i].ISBN
+                for (let i = 0; i < this.tableData.length; i++) {
+                  if (this.tableData[i].ISBN === tmpISBN) {
+                    this.tableData.splice(i, 1)
+                  }
+                }
+              }
             } else if (res.data.deleteStatus === 500) {
               this.$message.error('下架失败')
               console.log('some book delete fail')

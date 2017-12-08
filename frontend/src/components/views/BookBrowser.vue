@@ -83,8 +83,7 @@
           if (b.left_number === 0) {
             b.available = '不在馆'
             blist.push(b)
-          }
-          else {
+          } else {
             b.available = '在馆'
             blist.push(b)
           }
@@ -92,20 +91,20 @@
         this.currentPage = 0
         this.selectTag = 0
         this.bookTagList = blist
-        this.bookList = blist.slice(0, 5>=blist.length?blist.length:5)
+        this.bookList = blist.slice(0, blist.length <= 5 ? blist.length : 5)
       },
       selectTag: function (tagKey) {
-        var blist =[]
+        var blist = []
         console.log(tagKey)
-        for(var b of this.bookData) {
-          if (b.tags.includes(tagKey)){
+        for (var b of this.bookData) {
+          if (b.tags.includes(tagKey)) {
             blist.push(b)
           }
         }
         console.log(blist)
         this.currentPage = 0
         this.bookTagList = blist
-        this.bookList = blist.slice(0, 5>=blist.length?blist.length:5)
+        this.bookList = blist.slice(0, blist.length <= 5 ? blist.length : 5)
       }
     },
     methods: {
@@ -159,7 +158,7 @@
         console.log('searching === end ===')
         let win = this
         // query book
-        this.$http.get('/api/query_book', {
+        this.$http.get('/api/query_book/', {
           'params': {
             query_type: this.searchType,
             query_keyword: this.searchContent
@@ -181,9 +180,8 @@
       },
       deal_page_change (currentPage) {
         this.currentPage = currentPage
-        this.bookList = this.bookTagList.slice(currentPage*5, (currentPage+1)*5>=blist.length?blist.length:(currentPage+1)*5)
+        this.bookList = this.bookTagList.slice(currentPage * 5, (currentPage + 1) * 5 >= this.bookTagList.length ? this.bookTagList.length : (currentPage + 1) * 5)
       },
-
       handle_row_click (bookInfo) {
         this.infoVisible = true
         this.bookInfo = bookInfo
@@ -206,4 +204,5 @@
     text-align left
   #page-control
     margin-top: 40px
+    text-align: center
 </style>

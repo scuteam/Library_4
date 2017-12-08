@@ -75,8 +75,7 @@
       handle_status_change: function (visible) {
         if (!visible) {
           this.$emit('close')
-        }
-        else {
+        } else {
           this.ISBN = this.bookInfo.ISBN
           this.title = this.bookInfo.title
           this.total_number = this.bookInfo.total_number

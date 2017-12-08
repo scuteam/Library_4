@@ -15,9 +15,15 @@ def verify_account(request):
     print 'role', role
     status = query_account_by_id(username=account, password=password, role=role)
     if status == -1:
-        return HttpResponse(json.dumps({'loginStatus': 304, 'reason': 'name or role incorrect'}))
+        response = HttpResponse(json.dumps({'loginStatus': 304, 'reason': 'name or role incorrect'}))
+        response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        return response
     elif status == 1:
-        return HttpResponse(json.dumps({'loginStatus': 304, 'reason': 'name or password incorrect'}))
+        response = HttpResponse(json.dumps({'loginStatus': 304, 'reason': 'name or password incorrect'}))
+        response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        return response
     else:
         user = authenticate(username=account, password=password)
         print type(user)

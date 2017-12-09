@@ -16,7 +16,7 @@
     </el-row>
     <el-row>
       <el-col id='book-list' :xs="24" :sm="{span: 20, offset: 2}">
-        <el-table :data="bookLists" @row-click='handle_row_click' style="width: 100%">
+        <el-table :data="bookLists" :height="200px" @row-click='handle_row_click' style="width: 100%">
           <el-table-column  label="封面">
             <template slot-scope="scope">
               <img v-if="scope.row.surface" :src="scope.row.surface"  class="avatar">

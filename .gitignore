@@ -19,3 +19,6 @@ frontend/test/
 db.sqlite3
 .idea/
 backend/controllers/test_book_manage.py
+frontend/build
+frontend/package.json
+frontend/package-lock.json

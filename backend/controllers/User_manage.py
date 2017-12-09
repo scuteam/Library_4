@@ -16,10 +16,10 @@ def get_all_user(request):
 
 
 def create_user(request):
-    account = request.POST.get('ID')
+    ID = request.POST.get('ID')
     name = request.POST.get('name')
     password = request.POST.get('password')
-    status = create(account, name, password)
+    status = create(ID, name, password)
     reason = ''
     if status == -1:
         createStatus = 304
@@ -38,8 +38,8 @@ def delete_user(request):
     deleteStatus = 200
     reason = ''
     for user in userList:
-        account = user['ID']
-        status = delete(account)
+        ID = user['ID']
+        status = delete(ID)
         if status == -1:
             deleteStatus = 304
             reason = '账号不存在'

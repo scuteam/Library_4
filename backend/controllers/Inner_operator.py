@@ -16,11 +16,11 @@ def get_all_operator(request):
 
 
 def create_operator(request):
-    account = request.POST.get('account')
+    ID = request.POST.get('ID')
     role = request.POST.get('role')
     password = request.POST.get('password')
     name = request.POST.get('name')
-    status = create(account, role, password, name)
+    status = create(ID, role, password, name)
     reason = ''
     if status == -2:
         createStatus = 304
@@ -37,7 +37,7 @@ def create_operator(request):
 
 
 def update_operator(request):
-    ID = request.POST.get('account')
+    ID = request.POST.get('ID')
     role = request.POST.get('role')
     status = update(ID=ID, role=role)
     reason = ''

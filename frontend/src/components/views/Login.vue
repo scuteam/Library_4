@@ -93,6 +93,8 @@
                 this.$router.push({path: '/book_manage/:account', name: 'BookManage', params: {account: this.account}})
               } else if (this.role === 'admin') {
                 this.$router.push({path: '/admin/:account', name: 'Admin', params: {account: this.account}})
+              } else if (this.role === 'reception') {
+                this.$router.push({path: '/operator/:account', name: 'Operator', params: {account: this.account}})
               }
               this.$message.success('登录成功')
             } else {

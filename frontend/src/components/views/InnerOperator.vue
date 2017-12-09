@@ -23,7 +23,7 @@
           <el-table-column prop="Role" label="角色">
             <template slot-scope="scope">
           <el-select v-model= scope.row.role @change="deal_update_operator" style="width: 130px" >
-            <el-option label="书籍操作员" value="bookManage"></el-option>
+            <el-option label="书籍操作员" value="bookManager"></el-option>
             <el-option label="前台操作员" value="reception"></el-option>
           </el-select>
         </template>
@@ -38,16 +38,16 @@
     </el-row>
     <el-dialog :visible.sync="dialogVisible">
       <el-row>
-        <el-form :model="operatorInfo" labelWidth="50px">
+        <el-form :model="operatorInfo" labelWidth="100px">
           <el-col :span="12" :offset="6">
-            <el-form-item label="账号">
-              <el-input v-model="operatorInfo.account"></el-input>
+            <el-form-item label="身份证号">
+              <el-input v-model="operatorInfo.ID"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="6">
             <el-form-item label="角色">
               <el-select v-model="operatorInfo.role">
-                <el-option label="书籍操作员" value="bookManage"></el-option>
+                <el-option label="书籍操作员" value="bookManager"></el-option>
                 <el-option label="前台操作员" value="reception"></el-option>
               </el-select>
             </el-form-item>
@@ -86,13 +86,13 @@
         selectedList: [],
         dialogVisible: false,
         operatorInfo: {
-          account: '',
+          ID: '',
           role: '',
           password: '',
           name: ''
         },
         selectedRow: {
-          account: '',
+          ID: '',
           role: '',
           name: ''
         }
@@ -100,7 +100,7 @@
     },
     methods: {
       cell_click (row) {
-        this.selectedRow.account = row.ID
+        this.selectedRow.ID = row.ID
         this.selectedRow.role = row.role
         this.selectedRow.name = row.name
       },
@@ -121,11 +121,37 @@
         this.dialogVisible = false
       },
       deal_create_operator () {
+        if (this.operatorInfo.ID === '') {
+          this.$message.error('身份证号不能为空')
+          return
+        }
+        if (this.operatorInfo.role === '') {
+          this.$message.error('角色不能为空')
+          return
+        }
+        if (this.operatorInfo.name === '') {
+          this.$message.error('姓名不能为空')
+          return
+        }
+        if (this.operatorInfo.password.length < 6 || this.operatorInfo.password.length > 20) {
+          this.$message.error('密码长度应为6-20位')
+          return
+        }
+        let reg = /[1-9][0-9]{17}[x0-9]/
+        if (!reg.test(this.operatorInfo.ID)) {
+          this.$message.error('身份证号错误')
+          return false
+        }
         var qs = require('qs')
         this.$http.post('api/create_operator/', qs.stringify(this.operatorInfo))
           .then((res) => {
             if (res.data.createStatus === 200) {
               this.close_create_operator_view()
+              this.innerOperatorTableData.unshift({
+                ID: this.operatorInfo.ID,
+                role: this.operatorInfo.role,
+                name: this.operatorInfo.name
+              })
               this.$message.success('添加成功')
             } else if (res.data.createStatus === 304) {
               this.$message.error(res.data.reason)
@@ -135,34 +161,45 @@
           })
       },
       deal_delete_operator () {
-        var qs = require('qs')
-        let obj = {
-          'delete_operator_list': JSON.stringify(this.selectedList)
-        }
-        this.$http.post('api/delete_operator/', qs.stringify(obj))
-          .then((res) => {
-            if (res.data.deleteStatus === 200) {
-              this.$message.success('success')
-            } else if (res.data.deleteStats === 304) {
-              this.$message.error(res.data.reason)
-            }
-          })
+        this.$confirm('确认删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          var qs = require('qs')
+          let obj = {
+            'delete_operator_list': JSON.stringify(this.selectedList)
+          }
+          this.$http.post('api/delete_operator/', qs.stringify(obj))
+            .then((res) => {
+              if (res.data.deleteStatus === 200) {
+                this.selectedList.forEach(this.deleteItem)
+                this.$message.success('删除成功')
+              } else if (res.data.deleteStats === 304) {
+                this.$message.error(res.data.reason)
+              }
+            })
+        })
       },
       deal_update_operator (val) {
         this.selectedRow.role = val
         var qs = require('qs')
-        console.log(this.selectedRow.account, this.selectedRow.role)
+        console.log(this.selectedRow.ID, this.selectedRow.role)
         this.$http.post('api/update_operator/', qs.stringify(this.selectedRow))
           .then((res) => {
-            console.log(this.selectedRow.account, this.selectedRow.role)
+            console.log(this.selectedRow.ID, this.selectedRow.role)
             if (res.data.updateStatus === 200) {
-              this.$message.success('success')
+              this.$message.success('更改成功')
             } else if (res.data.updateStatus === 304) {
               this.$message.error(res.data.reason)
             } else {
               this.$message.error('未知的错误')
             }
           })
+      },
+      deleteItem (item) {
+        let index = this.innerOperatorTableData.indexOf(item)
+        this.innerOperatorTableData.splice(index, 1)
       }
     }
   }

@@ -16,7 +16,7 @@
     </el-row>
     <el-row>
       <el-col id='book-list' :xs="24" :sm="{span: 20, offset: 2}">
-        <el-table :data="bookLists" :height="200px" @row-click='handle_row_click' style="width: 100%">
+        <el-table :data="bookLists" :height="350" @row-click='handle_row_click' style="width: 100%">
           <el-table-column  label="封面">
             <template slot-scope="scope">
               <img v-if="scope.row.surface" :src="scope.row.surface"  class="avatar">
@@ -71,6 +71,7 @@
       SearchBar,
       BookInfo
     },
+    props: ['newBookData'],
     mounted: function () {
       this.init_tags()
       this.init_books()
@@ -108,6 +109,9 @@
         this.bookLists = blist.slice(0, blist.length <= 5 ? blist.length : 5)
         console.log('selectTag update')
         console.log(this.bookLists)
+      },
+      newBookData: function (newBookData) {
+        this.bookData = newBookData
       }
     },
     methods: {
@@ -156,7 +160,8 @@
       },
       deal_page_change (currentPage) {
         this.currentPage = currentPage
-        this.bookLists = this.bookTagList.slice(currentPage * 5, (currentPage + 1) * 5 >= this.bookTagList.length ? this.bookTagList.length : (currentPage + 1) * 5)
+        let calculatePage = currentPage - 1
+        this.bookLists = this.bookTagList.slice(calculatePage * 5, (calculatePage + 1) * 5 >= this.bookTagList.length ? this.bookTagList.length : (calculatePage + 1) * 5)
       },
       handle_row_click (bookInfo) {
         this.infoVisible = true

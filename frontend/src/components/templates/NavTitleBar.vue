@@ -2,7 +2,7 @@
   <div>
     <el-row>
       <el-menu theme="dark" class="top-menu" mode="horizontal" >
-        <el-menu-item index="1" id="navTitle">{{titleText}}</el-menu-item>
+        <el-menu-item index="1" id="navTitle" @click="backHome">{{titleText}}</el-menu-item>
         <el-col :span="1" :offset="19">
             <el-menu-item index="2" id="nav_button"><el-button type="primary" round @click="handleClick">{{buttonText}}</el-button></el-menu-item>
           </el-col>
@@ -35,6 +35,12 @@
               console.log('注销过程出错,错误信息如下:')
               console.log(err)
             })
+          this.$router.push('/')
+        }
+      },
+      backHome () {
+        if (this.titleText === '网上图书管理系统') {
+          console.log('click home')
           this.$router.push('/')
         }
       }

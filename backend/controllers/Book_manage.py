@@ -51,9 +51,10 @@ def create_book(request):
 
     # create tag
     print tags
+    print type(tags)
+    tags = json.loads(tags)
     total_tags = Query_all_tags.query_all_tags()
     for tag in tags:
-        t = None
         if tag not in total_tags:
             t = Tag.objects.create(tag_name=tag)
         else:

@@ -108,7 +108,7 @@
         <el-row v-show="bookRemoveVisible" id="book-remove">
           <el-col :span="20" :offset="2">
             <el-table
-              v-show="tableData.length !== 0"
+              v-show="bookRemoveVisible"
               ref="multiSelectionTable"
               :data="tableData"
               @selection-change="handleSelectionChange">
@@ -332,7 +332,14 @@
         console.log('selection change === end ===')
       },
       handleQueryResultShow (bookList) {
+        if (bookList.length === 0) {
+          this.$message.info('无相关书籍')
+          for (let i = 0; i < this.tableData.length; i++) {
+            this.tableData.pop()
+          }
+        }
         this.tableData.length = 0 // clear the tableData
+        console.log('after searching from server')
         for (let i = 0; i < bookList.length; i++) {
           let tmpBook = {
             ISBN: bookList[i].ISBN,
@@ -341,6 +348,7 @@
           }
           this.tableData.push(tmpBook)
         }
+        console.log('the tableData is ', this.tableData)
       },
       deal_create_book () {
         let newBook = {
@@ -364,7 +372,7 @@
                 message: '上架成功!'
               })
               console.log('image url is' + this.bookImageUrl)
-            // TODO: should clear the data?
+              this.deal_clear_info()
             } else if (res.data.createStatus === 500) {
               this.$message.error('上架失败')
             }
@@ -404,6 +412,17 @@
             console.log('deleting a book, got error, error msg: === end ===')
           })
         }
+      },
+      deal_clear_info () {
+        this.bookISBN = ''
+        this.bookName = ''
+        this.bookAuthor = ''
+        this.bookPublisher = ''
+        this.bookNumber = ''
+        this.bookIntroduction = ''
+        this.bookImageUrl = ''
+        this.bookAddVisible = true
+        this.bookRemoveVisible = false
       }
     }
   }

@@ -31,7 +31,7 @@
                 <p>{{scope.row.bookName}}</p>
               </template>
             </el-table-column>
-            <el-table-column prop="author" label="作者">
+            <el-table-column prop="borrowDate" label="借阅日期">
               <template slot-scope="scope">
                 <p>{{scope.row.bookAuthor}}</p>
               </template>

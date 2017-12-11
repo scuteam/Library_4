@@ -22,6 +22,11 @@
               <img v-if="scope.row.surface" :src="scope.row.surface"  class="avatar">
             </template>
           </el-table-column>
+          <el-table-column  label="标题">
+            <template slot-scope="scope">
+              <p>{{scope.row.title}}</p>
+            </template>
+          </el-table-column>
           <el-table-column  label="作者">
             <template slot-scope="scope">
               <p>{{scope.row.author}}</p>

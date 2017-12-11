@@ -43,7 +43,7 @@
         activeIndex: 'bookReturn',
         totalTags: [],
         returnBookVisible: true,
-        userAddVisible: true
+        userAddVisible: false
       }
     },
     mounted: function () {

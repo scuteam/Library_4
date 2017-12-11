@@ -81,12 +81,11 @@
         this.$http.post('api/create_user/', qs.stringify(this.userInfo))
           .then((res) => {
             if (res.data.createStatus === 200) {
-              this.close_create_user_view()
-              this.userTableData.unshift({
-                ID: this.userInfo.ID,
-                name: this.userInfo.name
-              })
               this.$message.success('添加成功')
+              this.userInfo.passwordTemp = ''
+              this.userInfo.ID = ''
+              this.userInfo.name = ''
+              this.userInfo.password = ''
             } else if (res.data.createStatus === 304) {
               this.$message.error(res.data.reason)
             } else {

@@ -10,6 +10,8 @@ def borrow(user, bookISBN):
     if book == None:
         print 'no Such book has ISBN: '+bookISBN
         return None
+    if book.left_number -1 < 0:
+        return None
     newBorrow = Borrow.objects.create(user = user[0], book = book)
     book.left_number -= 1
     book.save()

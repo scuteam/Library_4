@@ -15,7 +15,6 @@
       <el-row id="book-return">
         <el-col :span="20" :offset="2">
           <el-table
-            v-show="tableData.length !== 0"
             ref="multiSelectionTable"
             :data="tableData"
             @selection-change="handleSelectionChange">
@@ -33,7 +32,7 @@
             </el-table-column>
             <el-table-column prop="borrowDate" label="借阅日期">
               <template slot-scope="scope">
-                <p>{{scope.row.bookAuthor}}</p>
+                <p>{{scope.row.borrowDate}}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -115,6 +114,8 @@ export default {
           if (res.data.borrowStatus === 200) {
             this.$message.success('借阅成功')
             this.deal_query_book()
+          } else {
+            this.$message.error('借阅失败，超过库存，请联系书操作员')
           }
         }, (err) => {
           console.log(err)
@@ -135,6 +136,7 @@ export default {
           console.log('deleting a book, === start ===')
           if (res.data.returnStatus === 200) {
             this.$message.success('还书成功')
+            this.deal_query_book()
           }
           console.log()
           console.log('deleting a book, === end ===')

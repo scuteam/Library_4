@@ -2,7 +2,10 @@ from django.conf.urls import url
 # from django.contrib import admin
 # from django.conf.urls import include
 from controllers.Login import verify_account
-from controllers.Borrow_status import get_borrow_status, get_borrow_status_by_userInfo,borrow_book ,return_book
+from controllers.Borrow_status import get_borrow_status
+from controllers.Reception import query_borrow_status
+from controllers.Reception import borrow_book
+from controllers.Reception import return_book
 from views import query_book
 from views import logout
 from controllers.Query_all_tags import query_all_tags
@@ -16,7 +19,7 @@ urlpatterns = [
     url(r'^verify_account/', verify_account),
     url(r'^logout/',logout),
     url(r'^get_borrow_status/', get_borrow_status),
-    url(r'^get_borrow_status_by_userInfo/', get_borrow_status_by_userInfo),
+    url(r'^get_borrow_status_by_userInfo/', query_borrow_status),
     url(r'^borrow_book/', borrow_book),
     url(r'^return_book/', return_book),
     url(r'^query_book/', query_book),

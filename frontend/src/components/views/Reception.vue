@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import NavTitleBar from '../../templates/NavTitleBar.vue'
+  import NavTitleBar from '../templates/NavTitleBar.vue'
   import BookReturn from './BookReturnBorrow.vue'
   import UserAdd from './UserAdd.vue'
   export default {

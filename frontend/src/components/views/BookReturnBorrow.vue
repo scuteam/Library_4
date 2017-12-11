@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="5">
         <div id="borrow-button">
-          <el-button type="primary" v-show="borrowButtonVisible" id="borrowButton" @click="handleBorrowBook">借书</el-button>
+          <el-button type="primary" v-show="borrowButtonVisible" id="borrowButton" @click="click_borrow_btn">借书</el-button>
         </div>
       </el-col>
     </el-row>
@@ -41,7 +41,7 @@
       </el-row>
     <el-row>
       <el-col>
-        <el-button type="primary" v-show="returnButtonVisible" id="returnButton" @click="handleReturnBook">还书</el-button>
+        <el-button type="primary" v-show="returnButtonVisible" id="returnButton" @click="click_return_btn">还书</el-button>
       </el-col>
     </el-row>
   </div>
@@ -83,7 +83,7 @@ export default {
       this.id = id
       console.log('receive data')
     },
-    handleReturnBook () {
+    click_return_btn () {
       this.$confirm('确认将所选图书归还吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -99,7 +99,7 @@ export default {
         })
       })
     },
-    handleBorrowBook () {
+    click_borrow_btn () {
       this.$prompt('请输入ISBN', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'

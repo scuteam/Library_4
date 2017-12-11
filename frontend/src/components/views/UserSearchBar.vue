@@ -4,7 +4,7 @@
       <el-option label="姓名" value="name"></el-option>
       <el-option label="身份证" value="id"></el-option>
     </el-select>
-    <el-button slot="append" icon="el-icon-search" @click="deal_query_book"></el-button>
+    <el-button slot="append" icon="el-icon-search" @click="deal_query_borrow_status"></el-button>
   </el-input>
 </template>
 <script>
@@ -16,7 +16,7 @@
       }
     },
     methods: {
-      deal_query_book () {
+      deal_query_borrow_status () {
         console.log('searching === start ===')
         console.log('searchType is ' + this.searchType)
         console.log('searchContent is ' + this.searchContent)

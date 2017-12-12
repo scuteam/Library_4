@@ -62,6 +62,11 @@
               <el-input v-model="operatorInfo.password" type="password"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="12" :offset="6">
+            <el-form-item label="确认密码">
+              <el-input v-model="operatorInfo.passwordTemp" type="password"></el-input>
+            </el-form-item>
+          </el-col>
         </el-form>
       </el-row>
       <el-row>
@@ -89,6 +94,7 @@
           ID: '',
           role: '',
           password: '',
+          passwordTemp: '',
           name: ''
         },
         selectedRow: {
@@ -137,7 +143,11 @@
           this.$message.error('密码长度应为6-20位')
           return
         }
-        let reg = /[1-9][0-9]{17}[x0-9]/
+        if (this.operatorInfo.password !== this.operatorInfo.passwordTemp) {
+          this.$message.error('两次密码不同')
+          return
+        }
+        let reg = /[1-9][0-9]{16}[x0-9]/
         if (!reg.test(this.operatorInfo.ID)) {
           this.$message.error('身份证号错误')
           return false

@@ -80,7 +80,7 @@
               <el-col :offset="9">
                 <el-upload
                   class="avatar-uploader"
-                  action="http://localhost:8000/api/upload_book_surface/"
+                  action="http://110.64.88.38:8000/api/upload_book_surface/"
                   :show-file-list="false"
                   :auto-upload="true"
                   :on-success="handleAvatarSuccess"
@@ -300,8 +300,7 @@
         })
       },
       handleCancelAddBook () {
-        // TODO:
-        // clear all the input?
+        this.deal_clear_info()
       },
       handleAvatarSuccess (res, file) {
         this.bookImageUrl = URL.createObjectURL(file.raw)
@@ -375,6 +374,8 @@
               this.deal_clear_info()
             } else if (res.data.createStatus === 500) {
               this.$message.error('上架失败')
+            } else if (res.data.createStatus === 403) {
+              this.$message.error('书籍已存在')
             }
             console.log('creating a book, === end ===')
           }, (err) => {

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 import os
 import os.path
 import json
 from backend.models import Tag
+from backend.models import Book
 from backend.models import Has_tag
 from backend.services import Book_manage
 from backend.services import Query_all_tags
@@ -21,6 +23,15 @@ def create_book(request):
     tags = request.POST.get('tag')
     surface = ''
     print ISBN,author,publisher,total_number,left_number,intro,title
+
+    # check the book if exists
+    book_set = Book.objects.filter(ISBN=ISBN)
+    if book_set.__len__() != 0:
+        response = HttpResponse(json.dumps({'createStatus': 403}))
+        response['access-Control-Allow-Origin'] = '127.0.0.1:8080'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        return response
+
     # for surface img
     dir = 'static/image/'
     # print os.listdir()

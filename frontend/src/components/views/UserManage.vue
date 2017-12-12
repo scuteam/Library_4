@@ -57,7 +57,12 @@
           </el-col>
           <el-col :span="12" :offset="6">
             <el-form-item label="密码">
-              <el-input v-model="userInfo.password"></el-input>
+              <el-input v-model="userInfo.password" type="password"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" :offset="6">
+            <el-form-item label="确认密码">
+              <el-input v-model="userInfo.passwordTemp" type="password"></el-input>
             </el-form-item>
           </el-col>
         </el-form>
@@ -87,7 +92,8 @@
         userInfo: {
           ID: '',
           name: '',
-          password: ''
+          password: '',
+          passwordTemp: ''
         }
       }
     },
@@ -121,6 +127,10 @@
         }
         if (this.userInfo.password.length < 6 || this.userInfo.password.length > 20) {
           this.$message.error('密码长度应为6-20位')
+          return
+        }
+        if (this.userInfo.password !== this.userInfo.passwordTemp) {
+          this.$message.error('两次密码不同')
           return
         }
         let reg = /[1-9][0-9]{16}[x0-9]/

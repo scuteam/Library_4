@@ -3,7 +3,7 @@ from django.http import HttpResponse
 import json
 from backend.services.Borrow_status import query
 from backend.services.Reception import borrow
-from backend.services.Reception import return_book
+from backend.services.Reception import return_book_
 from backend.services.User_manage import get
 
 def query_borrow_status(request):
@@ -64,7 +64,7 @@ def return_book(request):
         response[
             'Access-Control-Allow-Credentials'] = 'true'  # add it to prevent 'ACAC is not allow to be '',and should be *'
         return response
-    isSuccess = return_book(user, bookISBN)
+    isSuccess = return_book_(user, bookISBN)
     if isSuccess == None:
         response = HttpResponse(json.dumps({'returnStatus': 304, 'reason': 'ISBN error'}))
     else:

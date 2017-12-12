@@ -18,7 +18,7 @@ def borrow(user, bookISBN):
     newBorrow.save()
     return True
 
-def return_book(user, bookISBN):
+def return_book_(user, bookISBN):
     book = Book.objects.get(ISBN=bookISBN)
     book.left_number+=1
     borrow = Borrow.objects.filter(user = user, book = book)

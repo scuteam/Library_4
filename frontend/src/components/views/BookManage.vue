@@ -80,7 +80,7 @@
               <el-col :offset="9">
                 <el-upload
                   class="avatar-uploader"
-                  action="http://119.23.73.156:8001/api/upload_book_surface/"
+                  action="http://localhost:8899/api/upload_book_surface/"
                   :show-file-list="false"
                   :auto-upload="true"
                   :on-success="handleAvatarSuccess"

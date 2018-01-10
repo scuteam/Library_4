@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import json
 from backend.services.Borrow_status import query
+from backend.services.User_manage import get
 
 @login_required
 def get_borrow_status(request):

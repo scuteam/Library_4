@@ -4,6 +4,10 @@ import Borrow from '@/components/views/Borrow'
 import Login from '@/components/views/Login'
 import Renew from '@/components/views/Renew'
 import BookManage from '@/components/views/BookManage'
+import Admin from '@/components/views/Admin'
+import InnerOperator from '@/components/views/InnerOperator'
+import UserManage from '@/components/views/UserManage'
+import Reception from '@/components/views/Reception'
 Vue.use(Router)
 
 export default new Router({
@@ -27,6 +31,31 @@ export default new Router({
       path: '/book_manage/:account',
       name: 'BookManage',
       component: BookManage
+    },
+    {
+      path: '/book_manage/:account',
+      name: 'BookManage',
+      component: BookManage
+    },
+    {
+      path: '/innerOperator',
+      name: 'InnerOperator',
+      component: InnerOperator
+    },
+    {
+      path: '/userManage',
+      name: 'UserManage',
+      component: UserManage
+    },
+    {
+      path: '/admin',
+      name: 'Admin',
+      component: Admin
+    },
+    {
+      path: '/reception',
+      name: 'Reception',
+      component: Reception
     }
   ]
 })

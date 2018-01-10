@@ -29,7 +29,7 @@
                     <el-select v-model="role" placeholder="角色">
                       <el-option label="用户" value="user"></el-option>
                       <el-option label="书籍操作员" value="bookManager"></el-option>
-                      <el-option label="管理员" value="innerOperator"></el-option>
+                      <el-option label="管理员" value="admin"></el-option>
                       <el-option label="前台操作员" value="reception"></el-option>
                     </el-select>
                   </el-form-item>
@@ -67,8 +67,16 @@
       deal_login () {
         console.log('views.Login.handleLogin ===start===')
         console.log('account:', this.account)
-        console.log('password:', this.password)
+        console.log('password:', this.password, 'ss')
         console.log('role:', this.role)
+        if (this.account === '' || this.password === '') {
+          this.$message.error('输入不能为空')
+          return
+        }
+        if (this.role === '') {
+          this.$message.error('请选择角色')
+          return
+        }
         let obj = {
           account: this.account,
           password: this.password,
@@ -83,6 +91,10 @@
                 this.$router.push({path: '/renew/:account', name: 'Renew', params: {account: this.account}})
               } else if (this.role === 'bookManager') {
                 this.$router.push({path: '/book_manage/:account', name: 'BookManage', params: {account: this.account}})
+              } else if (this.role === 'admin') {
+                this.$router.push({path: '/admin/:account', name: 'Admin', params: {account: this.account}})
+              } else if (this.role === 'reception') {
+                this.$router.push({path: '/reception/', name: 'Reception', params: {account: this.account}})
               }
               this.$message.success('登录成功')
             } else {

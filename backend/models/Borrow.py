@@ -23,4 +23,4 @@ class Borrow(models.Model):
         db_table = 'borrow'  # 表名
         verbose_name = 'borrow'  # 在 Admin 界面显示的名称
         verbose_name_plural = 'borrow'  # 在 Admin 界面显示的名称的复数形式
-        unique_together = ('user', 'book')
+        #unique_together = ('user', 'book')

@@ -4,8 +4,10 @@ from backend.services import Query_book
 def query_book(query_type, query_keyword):
     book_list = []
     if query_keyword.isspace():
+        print 'is space'
         book_list = Query_book.query_all()
         return book_list
+    print 'not space'
     if query_type == 'bookISBN':
         book_list = Query_book.query_by_ISBN(query_keyword)
     elif query_type == 'bookName':
